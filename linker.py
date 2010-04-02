@@ -17,10 +17,23 @@ Part of mc454:
 
 """
 
-import os, sys, re, pdb, time, numpy, string, MySQLdb, ConfigParser, multiprocessing, cPickle, optparse, progress
-from Bio.SeqRecord import SeqRecord
+import pdb
+
+import os
+import sys
+import re
+import time
+import numpy
+import string
+import MySQLdb
+import cPickle
+import optparse
+import progress
+import ConfigParser
+import multiprocessing
 from Bio import pairwise2
 from Bio.SeqIO import QualityIO
+from Bio.SeqRecord import SeqRecord
 from Bio.Alphabet import SingleLetterAlphabet
 
 def motd():
