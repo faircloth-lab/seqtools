@@ -1,19 +1,13 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
-linkers.py
+linker.py
 
 Copyright (c) 2009-2010 Brant C. Faircloth.  All rights reserved.
 
 Provides:
     - parsing and error correction of hierarchically tagged
         next generation sequence reads
-
-Part of mc454:
-    - parsing hierarchically tagged sequence reads
-    - microsatellite identification
-    - sequence pooling/clustering
-    - microsatellite primer design
 
 """
 
@@ -40,16 +34,11 @@ def motd():
     '''Startup info'''
     motd = '''
     ##############################################################
-    #                     linkers.py                             #
+    #                     linker.py                              #
     # Provides:                                                  #
     #   - parsing and error correction of hierarchically tagged  #
     #     next generation sequence reads                         #
     #                                                            #
-    # Part of mc454:                                             #
-    #   - parsing hierarchically tagged sequence reads           #
-    #   - microsatellite identification                          #
-    #   - sequence pooling/clustering                            #
-    #   - microsatellite primer design                           #
     #                                                            #
     # Copyright (c) 2009-2010 Brant C. Faircloth                 #
     # 621 Charles E. Young Drive                                 #
