@@ -21,11 +21,12 @@ See `LICENSE.markdown` for standard, 2-clause BSD license.
 
 ## Dependencies
 
-* Python ( >2.6 or 2.5 with multiprocessing backport )
+* Python ( tested with 2.6.3 and 2.6.4; works with 2.5.x and multiprocessing backport )
+* numpy ( tested with 1.3.0 )
 * MySQL ( tested with > version 5.x.x )
-* MySQLdb (v. )
-* Biopython ( > v1.54 )
-* progress.py ( available in linker-py package or )
+* MySQLdb ( tested with 5.1.45 )
+* Biopython ( tested with 1.53 )
+* progress.py ( available in linker-py package )
 * a valid linker-py.conf file
 
 
@@ -49,14 +50,14 @@ You run the program using:
         
         python levenshtein.py --configuration=linker-py.conf --section=Linker
 
- * `getLinkerSequence..py` - this script will retrieve sequence from the database given a number of criteria
+ * `getLinkerSequence.py` - this script will retrieve sequence from the database given a number of criteria
         
         python getLinkerSequence.py --configuration=linker-py.conf
         
 ## Suggested Reading
 
  * Sequence tagging
-    * Matthias M, Stenzel U, Myles S, Prüfer K, Hofreiter M (2007) Targeted 
+    * Meyer M, Stenzel U, Myles S, Prüfer K, Hofreiter M (2007) Targeted 
     high-throughput sequencing of tagged nucleic acid samples.  Nucleic Acids 
     Research 35(15):e97.  [LINK][3]
     * Hamady M, Walker JJ, Harris JK, Gold NJ, Knight R (2008)
