@@ -8,6 +8,18 @@ Copyright (c) 2009-2010 Brant C. Faircloth.  All rights reserved.
 Provides:
     - parsing and error correction of hierarchically tagged
         next generation sequence reads
+        
+Requires:
+    - Python > 2.6.x
+    - MySQL
+    - MySQLdb
+    - Biopython
+    - progress.py
+    - numpy
+
+Usage:
+
+    `python linker.py --configuration=linker-py.conf`
 
 """
 
