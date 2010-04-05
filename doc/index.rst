@@ -10,6 +10,14 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
+   
+   introduction.rst
+   linker_tags.rst
+   installation.rst
+   checking_tags.rst
+   getting_data_out.rst
+   useful_queries.rst
+   references.rst
 
 Indices and tables
 ==================
