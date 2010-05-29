@@ -3,6 +3,7 @@ import operator
 import optparse
 import os
 import ConfigParser
+import Levenshtein
 
 def interface():
     '''Command-line interface'''
@@ -62,7 +63,27 @@ def levenshtein(a,b):
             current[j] = min(add, delete, change)
     return current[n]
 
-def getDistance(linkers, *args):
+def getDistanceC(linkers, *args, **kwargs):
+    #pdb.set_trace()
+    linker_dist = []
+    for l1 in xrange(len(linkers)):
+        s1 = linkers[l1]
+        for s2 in linkers[l1+1:]:
+            edit_distance = Levenshtein.distance(s1[1],s2[1])
+            linker_dist.append((s1[0], s2[0], edit_distance))
+    #pdb.set_trace()
+    link_list = [i[0] for i in linkers]
+    if len(linker_dist) == 0:
+        min_dist = 'NA'
+    else:
+        min_dist = min([i[2] for i in linker_dist])
+    if kwargs and kwargs['distances']:
+        linker_sorted = sorted(linker_dist, key=operator.itemgetter(2))
+        return linker_sorted
+    else:
+        return link_list, min_dist
+
+def getDistance(linkers, *args, **kwargs):
     #pdb.set_trace()
     linker_dist = []
     for l1 in xrange(len(linkers)):
@@ -76,12 +97,11 @@ def getDistance(linkers, *args):
         min_dist = 'NA'
     else:
         min_dist = min([i[2] for i in linker_dist])
-    if True:
+    if kwargs and kwargs['distances']:
         linker_sorted = sorted(linker_dist, key=operator.itemgetter(2))
-        for item in linker_sorted:
-            print item[0],item[1],item[2]
-    #pdb.set_trace()
-    return link_list, min_dist
+        return linker_sorted
+    else:
+        return link_list, min_dist
 
 def test():
     assert(levenshtein('shit','shat') == 1)
@@ -113,13 +133,17 @@ def main():
             g += ((c[0], links[c[0]]),)
         groups[1] = g
     elif options.section == 'Linker':
+        #pdb.set_trace()
         g = conf.items('Linker')
         groups[1] = g
         #pdb.set_trace()
         
     for g in groups:
         #pdb.set_trace()
-        ed = getDistance(groups[g], g)
+        ed = getDistance(groups[g], g, distances = True)
+        for d in ed:
+            print d
+        pdb.set_trace()
         ed[0].sort()
         print '%s %s\n\tlinkers = %s\n\tminimum edit distance = %s' % (options.section, g, str(ed[0]), ed[1])
 
