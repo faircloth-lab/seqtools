@@ -27,7 +27,8 @@ See `LICENSE.markdown` for standard, 2-clause BSD license.
 * MySQLdb ( tested with 5.1.45 )
 * Biopython ( tested with 1.53 )
 * progress.py ( available in linker-py package )
-* a valid linker-py.conf file
+* pylevenshtein ( for helper/levenshtein.py available from [http://code.google.com/p/pylevenshtein/](http://code.google.com/p/pylevenshtein/) )
+* a valid linker-py.conf file ( see example )
 
 
 ## Installation
