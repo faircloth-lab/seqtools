@@ -27,8 +27,8 @@ See `LICENSE.markdown` for standard, 2-clause BSD license.
 * MySQLdb ( tested with 5.1.45 )
 * Biopython ( tested with 1.53 )
 * progress.py ( available in linker-py package )
-* pylevenshtein ( for helper/levenshtein.py available from [http://code.google.com/p/pylevenshtein/](http://code.google.com/p/pylevenshtein/) )
 * a valid linker-py.conf file ( see example )
+* pylevenshtein [Optional] ( for helper/levenshtein.py available from [http://code.google.com/p/pylevenshtein/](http://code.google.com/p/pylevenshtein/) )
 
 
 ## Installation
@@ -43,17 +43,17 @@ You run the program using:
     python --configuration=linker-py.conf`
 
 
-## Extras
+## Extras (in `helpers/`)
 
 `linker-py` includes several additional 'helper' scripts to make your life easier:
 
- * `levenshtein.py` - this script will take a linker-py.conf file and evaluate the Levenshtein distance (or Hamming distance) between the tags on a per-section basis.
+ * `levenshtein.py` - this script will take a linker-py.conf file and evaluate the Levenshtein distance (or Hamming distance) between the tags on a per-section basis.  Requires pylevenshtein (see Dependencies above).
         
         python levenshtein.py --configuration=linker-py.conf --section=Linker
 
- * `getLinkerSequence.py` - this script will retrieve sequence from the database given a number of criteria
+ * `get_parsed_reads.py` - this script will retrieve sequence from the database given a number of criteria
         
-        python getLinkerSequence.py --configuration=linker-py.conf
+        python get_parsed_reads.py --configuration=linker-py.conf
         
 ## Suggested Reading
 
