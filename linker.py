@@ -434,7 +434,7 @@ def linkerWorker(sequence, params):
     tags = params.tags
     if params.midTrim:
         # search on 5' (left) end for MID
-        mid = midTrim(seqRecord.sequence, params.tags, params.midGap, fuzzy=params.fuzzy, error=params.allowed_errors)
+        mid = midTrim(seqRecord.sequence, params.tags, params.midGap, fuzzy=params.fuzzy, allowed_errors=params.allowed_errors)
         if mid:
             # if MID, search for exact matches (for and revcomp) on Linker
             # provided no exact matches, use fuzzy matching (Smith-Waterman) +
@@ -447,7 +447,7 @@ def linkerWorker(sequence, params):
             tags                    = params.tags[seqRecord.mid]
     #pdb.set_trace()
     if params.linkerTrim:
-        linker = linkerTrim(seqRecord.sequence, tags, params.linkerGap, fuzzy=params.fuzzy, error=params.allowed_errors)
+        linker = linkerTrim(seqRecord.sequence, tags, params.linkerGap, fuzzy=params.fuzzy, allowed_errors=params.allowed_errors)
         if linker:
             if linker[0]:
                 seqRecord.l_tag             = linker[0]
@@ -519,7 +519,7 @@ class Parameters():
         self.db              = self.conf.get('Database','DATABASE')
         self.user            = self.conf.get('Database','USER')
         self.pwd             = self.conf.get('Database','PASSWORD')
-        self.qualTrim        = self.conf.getboolean('Steps', 'Trim')
+        self.qualTrim        = self.conf.getboolean('Steps', 'QualTrim')
         self.minQual         = self.conf.getint('GeneralParameters', 'MinQualScore')
         self.midTrim         = self.conf.getboolean('Steps','MidTrim')
         self.midGap          = self.conf.getint('GeneralParameters','MidGap')
