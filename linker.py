@@ -152,7 +152,7 @@ def midTrim(sequence, tags, max_gap_char=5, **kwargs):
     #if sequence.id == 'MID_No_Error_ATACGACGTA':
     #    pdb.set_trace()
     s = str(sequence.seq)
-    mid = leftLinker(s, tags, max_gap_char, True, fuzzy=kwargs['fuzzy'])
+    mid = leftLinker(s, tags, max_gap_char, True, fuzzy=kwargs['fuzzy'], allowed_errors=kwargs['allowed_errors'])
     if mid:
         trimmed = trim(sequence, mid[3])
         tag, m_type, seq_match = mid[0], mid[1], mid[4]
@@ -186,7 +186,7 @@ def leftLinker(s, tags, max_gap_char, gaps=False, **kwargs):
     #if s == 'ACCTCGTGCGGAATCGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAG':
     #    pdb.set_trace()
     if not match and kwargs['fuzzy']:
-        match = smithWaterman(s, tags, 1)
+        match = smithWaterman(s, tags, kwargs['allowed_errors'])
         # we can trim w/o regex
         if match:
             m_type = 'fuzzy'
@@ -217,7 +217,7 @@ def rightLinker(s, tags, max_gap_char, gaps=False, **kwargs):
             seq_match = tag
             break
     if not match and kwargs['fuzzy']:
-        match = smithWaterman(s, revtags, 1)
+        match = smithWaterman(s, revtags, kwargs['allowed_errors'])
         # we can trim w/o regex
         if match:
             m_type = 'fuzzy'
@@ -234,8 +234,8 @@ def linkerTrim(sequence, tags, max_gap_char=22, **kwargs):
     to locate and trim linkers from sequences'''
     m_type  = False
     s       = str(sequence.seq)
-    left    = leftLinker(s, tags, max_gap_char=22, fuzzy=kwargs['fuzzy'])
-    right   = rightLinker(s, tags, max_gap_char=22, fuzzy=kwargs['fuzzy'])
+    left    = leftLinker(s, tags, max_gap_char=22, fuzzy=kwargs['fuzzy'], allowed_errors=kwargs['allowed_errors'])
+    right   = rightLinker(s, tags, max_gap_char=22, fuzzy=kwargs['fuzzy'], allowed_errors=kwargs['allowed_errors'])
     if left and right and left[0] == right[0]:
         # we can have lots of conditional matches here
         if left[2] <= max_gap_char and right[2] >= (len(s) - (len(right[0]) +\
@@ -434,7 +434,7 @@ def linkerWorker(sequence, params):
     tags = params.tags
     if params.midTrim:
         # search on 5' (left) end for MID
-        mid = midTrim(seqRecord.sequence, params.tags, params.midGap, fuzzy=params.fuzzy)
+        mid = midTrim(seqRecord.sequence, params.tags, params.midGap, fuzzy=params.fuzzy, error=params.allowed_errors)
         if mid:
             # if MID, search for exact matches (for and revcomp) on Linker
             # provided no exact matches, use fuzzy matching (Smith-Waterman) +
@@ -447,7 +447,7 @@ def linkerWorker(sequence, params):
             tags                    = params.tags[seqRecord.mid]
     #pdb.set_trace()
     if params.linkerTrim:
-        linker = linkerTrim(seqRecord.sequence, tags, params.linkerGap, fuzzy=params.fuzzy)
+        linker = linkerTrim(seqRecord.sequence, tags, params.linkerGap, fuzzy=params.fuzzy, error=params.allowed_errors)
         if linker:
             if linker[0]:
                 seqRecord.l_tag             = linker[0]
@@ -527,6 +527,7 @@ class Parameters():
         self.linkerGap       = self.conf.getint('GeneralParameters','LinkerGap')
         self.concat          = self.conf.getboolean('GeneralParameters','CheckForConcatemers')
         self.fuzzy           = self.conf.getboolean('GeneralParameters','FuzzyMatching')
+        self.allowed_errors  = self.conf.getint('GeneralParameters','AllowedErrors')
         self.mids            = None
         self.reverse_mid     = None
         self.linkers         = None
