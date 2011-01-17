@@ -84,7 +84,7 @@ class TestFopsFunctions(unittest.TestCase):
         self.clean(tf)
     
     def test_fastq_chunking(self):
-        """[fops] sum(chunked fasta file) = unchunked fastq file"""
+        """[fops] sum(chunked fastq file) = unchunked fastq file"""
         input = 'test-data/galGal3.read1.fq'
         unchunk_headers = self.get_fasta_headers(input)
         tf = self.get_chunks(input)

@@ -38,6 +38,21 @@ class TestSequenceSetQuality(unittest.TestCase):
     def tearDown(self):
         pass
 
+class TestValidSequence(unittest.TestCase):
+    def setUp(self):
+        self.s = sequence.SequencingRead()
+        self.s.identifier = 'chr5_6255117_6255601_0:0:0_1:0:0_13'
+        self.s.sequence = 'CTTGGATCAGATGAAAXTGCAGCTTGTATTTAATCTGGCAAAGAGCCTACGTGTATTGTGTCCAGTGGGAACAATGCTATGTCACCGAGTCTGTAAGAAX'
+    
+    def test_invalid_sequence(self):
+        """[sequence] invalid sequence"""
+        self.assertFalse(self.s.is_valid_sequence())
+    
+    def test_valid_sequence(self):
+        """[sequence] valid sequence"""
+        self.s.sequence = self.s.sequence.replace('X','A')
+        assert self.s.is_valid_sequence()
+
 class TestSequenceMethods(unittest.TestCase):
         
     def setUp(self):
@@ -211,7 +226,7 @@ class TestSequenceTrimmingMethods(unittest.TestCase):
 
     def test_snapshot(self):
        """[sequence] snapshot untrimmed sequence"""
-       self.s.trim(20)
+       self.s.trim(20, clone = False)
        self.failIfEqual(self.s.sequence, self.s.sequence_snapshot)
        self.failIfEqual(self.s.quality, self.s.quality_snapshot)
        assert self.s.sequence_snapshot == "ATACGACGTAACGTCGTGCGGAATCGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAGGATGCCGCACGACGT"
@@ -220,10 +235,20 @@ class TestSequenceTrimmingMethods(unittest.TestCase):
                   40, 40, 40, 40, 40, 40, 40, 40, 40, 10, 40, 40, 40, 40, 40, 40, 40,
                   40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40,
                   40, 40, 40, 40, 30, 20, 20, 10, 10])).all()
+        
+    def test_trim_clone(self):
+        """[sequence] trim cloning"""
+        t = self.s.trim(20)
+        self.assertNotEqual(id(self.s), id(t))
 
+    def test_trim_clone(self):
+        """[sequence] trim no cloning"""
+        t = self.s.trim(20, clone = False)
+        self.assertEqual(id(self.s), id(t))
+    
     def test_trim_20_bases(self):
         """[sequence] trim bases w/ quality < 20"""
-        self.s.trim(20)
+        self.s.trim(20, clone = False)
         assert self.s.sequence == "ACGACGTAACGTCGTGCGGAATCGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAGGATGCCGCACGAC"
         correct_qual_trim = numpy.array([20, 30, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40,
                    40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40,
@@ -237,7 +262,7 @@ class TestSequenceTrimmingMethods(unittest.TestCase):
 
     def test_trim_30_bases(self):
         """[sequence] trim bases w/ quality < 30"""
-        self.s.trim(30)
+        self.s.trim(30, clone = False)
         assert self.s.sequence == "CGACGTAACGTCGTGCGGAATCGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAGGATGCCGCACG"
         correct_qual_trim = numpy.array([30, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40,
                    40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40,
@@ -251,7 +276,7 @@ class TestSequenceTrimmingMethods(unittest.TestCase):
 
     def test_trim_no_bases(self):
         """[sequence] trim no bases when the min_qual = 0"""
-        self.s.trim(0)
+        self.s.trim(0, clone = False)
         assert self.s.sequence == "ATACGACGTAACGTCGTGCGGAATCGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAGGATGCCGCACGACGT"
         assert (self.s.quality == numpy.array([10, 10, 20, 30, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40,
                    40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40,
@@ -262,9 +287,19 @@ class TestSequenceTrimmingMethods(unittest.TestCase):
         assert 'N' not in self.s.sequence
         assert not self.s.trimming
 
+    def test_mask_clone(self):
+        """[sequence] mask cloning"""
+        t = self.s.mask(20)
+        self.assertNotEqual(id(self.s), id(t))
+
+    def test_mask_clone(self):
+        """[sequence] mask no cloning"""
+        t = self.s.mask(20, clone = False)
+        self.assertEqual(id(self.s), id(t))
+    
     def test_mask_20_bases(self):
         """[sequence] mask bases w/ quality < 20"""
-        self.s.mask(20)
+        self.s.mask(20, clone = False)
         assert self.s.sequence == "NNACGACGTAACGTCGTGCGGAATCGAGAGAGAGAGAGAGAGANAGAGAGAGAGAGAGAGAGGATGCCGCACGACNN"
         assert (self.s.quality == numpy.array([0, 0, 20, 30, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40,
                    40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40,
@@ -278,9 +313,19 @@ class TestSequenceTrimmingMethods(unittest.TestCase):
         assert len(numpy.where(self.s.quality == 0)[0]) == 5
         assert self.s.trimming == 'm'
 
+    def test_mask_and_trim_clone(self):
+        """[sequence] mask and trim cloning"""
+        t = self.s.mask_and_trim(20)
+        self.assertNotEqual(id(self.s), id(t))
+
+    def test_mask_and_trim_no_clone(self):
+        """[sequence] mask and trim no cloning"""
+        t = self.s.mask_and_trim(20, clone = False)
+        self.assertEqual(id(self.s), id(t))
+    
     def test_mask_and_trim_20_bases(self):
         """[sequence] mask and trim bases (edges) where quality < 5"""
-        self.s.mask_and_trim(20)
+        self.s.mask_and_trim(20, clone = False)
         assert self.s.sequence == "ACGACGTAACGTCGTGCGGAATCGAGAGAGAGAGAGAGAGANAGAGAGAGAGAGAGAGAGGATGCCGCACGAC"
         assert (self.s.quality == numpy.array([20, 30, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40,
                    40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40,

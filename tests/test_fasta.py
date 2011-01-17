@@ -17,16 +17,17 @@ import pdb
 
 class TestSequenceSetQuality(unittest.TestCase):
     def setUp(self):
-        self.s = fasta.fastaSequence()
-        self.s.identifier = '@chr5_6255117_6255601_0:0:0_1:0:0_13'
+        self.s = fasta.FastaSequence()
+        self.s.identifier = 'chr5_6255117_6255601_0:0:0_1:0:0_13'
         self.s.sequence = 'CTTGGATCAGATGAAAATGCAGCTTGTATTTAATCTGGCAAAGAGCCTACGTGTATTGTGTCCAGTGGGAACAATGCTATGTCACCGAGTCTGTAAGAAT'
     
     def test_set_quality(self):
         """[fasta] convert string quality to array"""
-        q = "5 5 17 17 3 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17"\
-            +" 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17"\
-            +" 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17"\
-            +" 17 17 17 17 17 17 17 17 17 17 17 5 4 3"
+        q = "5 5 17 17 3 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17"\
+        +" 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17"\
+        +" 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17"\
+        +" 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17 17"\
+        +" 17 17 17 17 17 17 17 17 17 5 4 3"
         self.s.set_quality(q)
         assert (self.s.quality == numpy.array([ 5,  5, 17, 17,  3, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
                        17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
@@ -41,9 +42,9 @@ class TestSequenceSetQuality(unittest.TestCase):
 class TestFastaReader(unittest.TestCase):
     def setUp(self):
         # switch to this directory - so we can have access to data
-        os.chdir(os.path.dirname(os.path.abspath( __file__ )))
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
         seq = 'test-data/sequence.fasta'
-        self.fasta = fasta.fastaReader(seq)
+        self.fasta = fasta.FastaReader(seq)
     
     def runTest(self):
         """[fasta] reader"""
@@ -60,7 +61,7 @@ class TestFastaQualReader(unittest.TestCase):
         os.chdir(os.path.dirname(os.path.abspath( __file__ )))
         seq = 'test-data/sequence.fasta'
         qual = 'test-data/sequence.qual'
-        self.seq = fasta.fastaQualityReader(seq, qual)
+        self.seq = fasta.FastaQualityReader(seq, qual)
 
     def runTest(self):
         """[fasta] qual reader"""
@@ -74,17 +75,17 @@ class TestFastaQualReader(unittest.TestCase):
 
 class TestFastaWriter(unittest.TestCase):
     def setUp(self):
-        os.chdir(os.path.dirname(os.path.abspath( __file__ )))
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
         seq = 'test-data/sequence.fasta'
         qual = 'test-data/sequence.qual'
-        self.seq = fasta.fastaQualityReader(seq, qual)
+        self.seq = fasta.FastaQualityReader(seq, qual)
     
     def _read_raw_contents(self, file):
         return open(file).read()
     
     def test_fasta_write(self):
         """[fasta] fasta writing"""
-        outf = fasta.fastaWriter('test-output/test_write.fasta')
+        outf = fasta.FastaWriter('test-output/test_write.fasta')
         for s in self.seq:
             outf.write(s)
         outf.close()
@@ -95,7 +96,7 @@ class TestFastaWriter(unittest.TestCase):
     
     def test_fasta_qual_write(self):
         """[fasta] fasta+qual writing"""
-        outf = fasta.fastaWriter('test-output/test_write.fasta', 'test-output/test_write.qual')
+        outf = fasta.FastaWriter('test-output/test_write.fasta', 'test-output/test_write.qual')
         for s in self.seq:
             outf.write(s)
         outf.close()

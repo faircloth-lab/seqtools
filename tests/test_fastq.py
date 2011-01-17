@@ -1,50 +1,92 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-"""
-test_fastq.py
+"""tests for fastq classes and methods
 
-Created by Brant Faircloth on 14 December 2010 22:19 PST (-0800).
 Copyright (c) 2010 Brant C. Faircloth. All rights reserved.
 
+These files (fasta.py, fastq.py, transform.py, sequence.py) contain code and
+ideas derived from galaxy-dist (http://bitbucket.org/galaxy/galaxy-dist/src/).
+The original files were created by Dan Blankenberg.  See:
 
-This file incorporates several snippets of code covered by the following terms:
+Blankenberg et al.  doi:  10.1093/bioinformatics/btq281
 
-        Copyright (c) 2005 Pennsylvania State University
+I have modified the original source, changing the way that quality scores are
+stored and used (all quality scores are stored as numpy arrays in sanger-spec
+integer (phred) values with methods to convert and display the array as a
+standard quality string).  I've added additional methods to several of the
+classes (e.g. trimming within sequence.SequenceRead - subclassed by both fasta
+and fastq), and I altered methods and class methods to use numpy methods
+within functions, for speed and where possible.  Finally, i slightly changed
+how fasta and fastq files are read.
 
-        Permission is hereby granted, free of charge, to any person obtaining
-        a copy of this software and associated documentation files (the
-        "Software"), to deal in the Software without restriction, including
-        without limitation the rights to use, copy, modify, merge, publish,
-        distribute, sublicense, and/or sell copies of the Software, and to
-        permit persons to whom the Software is furnished to do so, subject to
-        the following conditions:
+This file incorporates code covered by the following terms:
 
-        The above copyright notice and this permission notice shall be
-        included in all copies or substantial portions of the Software.
+Copyright (c) 2005 Pennsylvania State University
 
-        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-        EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-        MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-        IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-        CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-        TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-        SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 """
 
 import os
-import numpy
 import math
+import numpy
+import cPickle
 import unittest
-import exceptions
 from demuxipy.lib import fastq
 
 import pdb
 
-class TestFastqClassMethods(unittest.TestCase):
+class TestSangerQualitySpecMethods(unittest.TestCase):
+    """Ensure that invalid Sanger quality values fail"""
     def setUp(self):
-        self.s = fastq.fastqSequencingRead()
+        self.s = fastq.FastqSequencingRead()
+        self.s.sequence = "CTTGGATCAGATGAAAATGCAGCTTGTATTTAATCTGGCAAAGAGCCTACGTGTATTGTGTCCAGTGGGAACAATGCTATGTCACCGAGTCTGTAAGAAT"
+    
+    def test_fastq_is_valid_quality_format(self):
+        """[fastq] valid sanger quality format passes"""
+        self.s.set_quality('&&22$22222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222&%$')
+        self.failUnless(self.s.quality.any())
+        
+    def test_fastq_invalid_format_fails(self):
+        """[fastq] invalid quality format (space in fastq) fails"""
+        self.failUnlessRaises(AssertionError, self.s.set_quality, ' &22$22222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222&%$')
+
+class TestNonSangerQualitySpecMethods(unittest.TestCase):
+    """Ensure that invalid Solexa quality values fail"""
+    def setUp(self):
+        self.s = fastq.FastqSequencingRead.get_class_by_format('solexa')()
+        self.s.sequence = "CTTGGATCAGATGAAAATGCAGCTTGTATTTAATCTGGCAAAGAGCCTACGTGTATTGTGTCCAGTGGGAACAATGCTATGTCACCGAGTCTGTAAGAAT"
+    
+    def test_fastq_valid_quality_format(self):
+        """[fastq] valid solexa quality format passes"""
+        self.s.set_quality('CCQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQCB@')
+        self.failUnless(self.s.quality.any())
+    
+    def test_fastq_invalid_format_fails2(self):
+        """[fastq] invalid solexa quality format (incorrect ascii character) fails"""
+        self.failUnlessRaises(AssertionError, self.s.set_quality, '&&22$22222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222&%$')
+
+class TestFastqClassMethods(unittest.TestCase):
+    """Genral test of fastq methods"""
+    def setUp(self):
+        self.s = fastq.FastqSequencingRead()
         self.s.identifier = "@chr5_6255117_6255601_0:0:0_1:0:0_13/1"
         self.s.sequence = "CTTGGATCAGATGAAAATGCAGCTTGTATTTAATCTGGCAAAGAGCCTACGTGTATTGTGTCCAGTGGGAACAATGCTATGTCACCGAGTCTGTAAGAAT"
         self.s.set_quality("&&22$22222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222&%$")
@@ -92,7 +134,7 @@ class TestFastqClassMethods(unittest.TestCase):
         return map(self.old_restrict_score, decimal_score_list)
     
     def test_restrict_scores_to_valid_range(self):
-        """[fastq] ensure that scores do not exceed the maximum for the standard"""
+        """[fastq] ensure that scores do not exceed the maximum for the format"""
         self.s.quality = numpy.array([100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
@@ -116,7 +158,7 @@ class TestFastqClassMethods(unittest.TestCase):
         else:
             return []
     
-    def test_get_ascii_quality_scores(self):
+    def test_get_ascii_quality_scores_as_string(self):
         """[fastq] convert decimal scores to ascii scores"""
         self.s.sequence = 'CTTGGATCAGATGAAAATG'
         q = '10 10 20 30 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 '
@@ -125,18 +167,52 @@ class TestFastqClassMethods(unittest.TestCase):
         new = self.s.get_quality_string('ascii')
         assert new == old
     
-    def test_get_decimal_quality_scores(self):
+    def test_get_decimal_quality_scores_as_string(self):
+        """[fastq] return decimal quality scores as a string"""
+        self.s.sequence = 'CTTGGATCAGATGAAAATG'
+        q = '10 10 20 30 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 '
+        self.s.set_quality(q)
+        new = self.s.get_quality_string()
+        assert new == q.strip()
+        
+    def test_convert_ascii_to_decimal_quality_scores(self):
         """[fastq] convert ascii scores to decimal scores"""
         self.s.sequence = 'CTTGGATCAGATGAAAATG'
         self.s.set_quality('++5?IIIIIIIIIIIIIII')
         assert (self.s.quality == [10, 10, 20, 30, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40]).all()
         self.s.set_quality('10 10 20 30 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 ')
         assert (self.s.quality == [10, 10, 20, 30, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40]).all()
-        self.s.set_quality(' ')
-        assert self.s.quality == None
     
+    def test_get_sequence(self):
+        """[fastq] return sequence"""
+        s = self.s.get_sequence()
+        assert s == 'CTTGGATCAGATGAAAATGCAGCTTGTATTTAATCTGGCAAAGAGCCTACGTGTATTGTGTCCAGTGGGAACAATGCTATGTCACCGAGTCTGTAAGAAT'
+    
+    def test_is_valid_quality_length(self):
+        """[fastq] quality length matches sequence length"""
+        self.assertTrue(self.s.is_valid_quality_length())
+    
+    def  test_is_not_valid_quality_length(self):
+        """[fastq] invalid quality length fails"""
+        self.s.quality = numpy.array([ 5,  5, 17, 17, 17, 17])
+        self.assertFalse(self.s.is_valid_quality_length())
+    
+    def  test_assert_sequence_quality_lengths(self):
+        """[fastq] quality length matches sequence length"""
+        self.s.quality = numpy.array([ 5,  5, 17, 17, 17, 17])
+        self.failUnlessRaises(AssertionError, self.s.assert_sequence_quality_lengths)
+        
+class TestFastqErrors(unittest.TestCase):
+    def setUp(self):
+        self.s = fastq.FastqSequencingRead()
+        self.s.sequence = 'CTTGGATCAGATGAAAATG'
+    
+    def test_get_decimal_quality_when_no_quality_array(self):
+        """[fastq] raise ValueError when no quality string"""
+        self.assertRaises(ValueError, self.s.get_quality_string)
+
 class TestFastqConversions(unittest.TestCase):
-    
+    """test conversions from one format (sanger) to another (solexa)"""
     def setUp(self):
         self.identifier = '@chr5_56045273_56045722_1:0:0_2:0:0_12/1'
         self.sequence = 'CTTGGATCAGATGAAAATGCAGCTTGTATTTAATCTGGCAAAGAGCCTACGTGTATTGTGTCCAGTGGGAACAATGCTATGTCACCGAGTCTGTAAGAAT'
@@ -158,7 +234,7 @@ class TestFastqConversions(unittest.TestCase):
     
     def test_for_wrong_format(self):
         """[fastq] disallow improper quality formats"""
-        self.observed = fastq.fastqSequencingRead.get_class_by_format('illumina')()
+        self.observed = fastq.FastqSequencingRead.get_class_by_format('illumina')()
         self.observed.identifier = self.identifier
         self.observed.sequence = self.sequence
         self.observed.set_quality(self.illumina_quality)
@@ -166,7 +242,7 @@ class TestFastqConversions(unittest.TestCase):
 
     def test_convert_ilumina_to_sanger(self):
         """[fastq] convert illumina to sanger"""
-        self.observed = fastq.fastqSequencingRead.get_class_by_format('illumina')()
+        self.observed = fastq.FastqSequencingRead.get_class_by_format('illumina')()
         self.observed.identifier = self.identifier
         self.observed.sequence = self.sequence
         self.observed.set_quality(self.illumina_quality)
@@ -177,7 +253,7 @@ class TestFastqConversions(unittest.TestCase):
     
     def test_convert_sanger_to_illumina(self):
         """[fastq] convert sanger to illumina"""
-        self.observed = fastq.fastqSequencingRead.get_class_by_format('sanger')()
+        self.observed = fastq.FastqSequencingRead.get_class_by_format('sanger')()
         self.observed.identifier = self.identifier
         self.observed.sequence = self.sequence
         self.observed.set_quality(self.sanger_quality)
@@ -187,7 +263,7 @@ class TestFastqConversions(unittest.TestCase):
     
     def test_convert_sanger_to_solexa(self):
         """[fastq] convert sanger to solexa"""
-        self.observed = fastq.fastqSequencingRead.get_class_by_format('sanger')()
+        self.observed = fastq.FastqSequencingRead.get_class_by_format('sanger')()
         self.observed.identifier = self.identifier
         self.observed.sequence = self.sequence
         self.observed.set_quality(self.sanger_quality)
@@ -197,7 +273,7 @@ class TestFastqConversions(unittest.TestCase):
     
     def test_convert_solexa_to_sanger(self):
         """[fastq] convert solexa to sanger"""
-        self.observed = fastq.fastqSequencingRead.get_class_by_format('solexa')()
+        self.observed = fastq.FastqSequencingRead.get_class_by_format('solexa')()
         self.observed.identifier = self.identifier
         self.observed.sequence = self.sequence
         self.observed.set_quality(self.solexa_quality)
@@ -207,7 +283,7 @@ class TestFastqConversions(unittest.TestCase):
     
     def test_convert_solexa_to_illumina(self):
         """[fastq] convert solexa to illumina"""
-        self.observed = fastq.fastqSequencingRead.get_class_by_format('solexa')()
+        self.observed = fastq.FastqSequencingRead.get_class_by_format('solexa')()
         self.observed.identifier = self.identifier
         self.observed.sequence = self.sequence
         self.observed.set_quality(self.solexa_quality)
@@ -215,12 +291,126 @@ class TestFastqConversions(unittest.TestCase):
         assert (converted.quality == self.expected_quality).all()
         assert converted.get_quality_string('ascii') == self.illumina_quality
 
+class TestFastqSummarizer(unittest.TestCase):
+    """test our methods to summarize fastq read data"""
+    def setUp(self):
+        fastqs = fastq.FastqReader('../tests/test-data/sequence_for_summarizer.fastq')
+        self.summary = fastq.FastqSummarizer()
+        for read in fastqs:
+            self.summary.add(read)
+        self.archive = None
+        
+    def tearDown(self):
+        if self.archive:
+            self.archive.close()
+    
+    def test_correct_quality_stack(self):
+        """[fastq] summary stack qualities"""
+        archive = open('../tests/test-data/sequence_for_summarizer_quality.pickle','r')
+        archive_data = cPickle.loads(archive.read())
+        # this is a little kludgy - but drop NaNs and compare.  The main
+        # problem is that nan values are not equiv.
+        # >>> numpy.nan == numpy.nan
+        # False
+        assert (archive_data[numpy.isfinite(archive_data)] \
+            == self.summary.qualities[numpy.isfinite(self.summary.qualities)]).all()
+        
+    def test_correct_base_counts(self):
+        """[fastq] summary count bases"""
+        archive = open('../tests/test-data/sequence_for_summarizer_bases.pickle','r')
+        archive_data = cPickle.loads(archive.read())
+        assert (archive_data == self.summary.bases).all()
+    
+    def test_correct_lengths(self):
+        """[fastq] summary sequence lengths"""
+        expected = {100:2, 200:1}
+        assert self.summary.lengths == expected
+    
+    def test_correct_decimal_range(self):
+        """[fastq] summary decimal range"""
+        assert self.summary.get_decimal_range() == (3.0, 17.0)
+    
+    def test_correct_length_count(self):
+        """[fastq] summary sequence lengths"""
+        expected = {100:2, 200:1}
+        assert self.summary.get_length_counts() == expected
+    
+    def test_max_read_length(self):
+        """[fastq] summary max read length"""
+        assert self.summary.get_max_read_length() == 200
+    
+    def test_min_read_lenght(self):
+        """[fastq] summary min read length"""
+        assert self.summary.get_min_read_length() == 100
+    
+    def test_read_count_for_column_three(self):
+        """[fastq] summary read count for column 10"""
+        column_ten = self.summary.get_read_count_for_column(10)
+        assert column_ten == 3
+    
+    def test_read_count_for_column_one_o_one(self):
+        """[fastq] summary read count for column 101"""
+        column_one_o_one = self.summary.get_read_count_for_column(101)
+        assert column_one_o_one == 1
+    
+    def test_read_count_for_column_two_o_one(self):
+        """[fastq] summary read count for column 201"""
+        column_too_many = self.summary.get_read_count_for_column(201)
+        assert column_too_many == 0
+    
+    def test_read_count(self):
+        """[fastq] summary read count (overall)"""
+        assert self.summary.get_read_count() == 3
+    
+    def test_base_counts_for_column(self):
+        """[fastq] summary base counts for column"""
+        expected = {'A': 0.0, 'C': 0.0, 'T': 3.0, 'G': 0.0, 'N': 0.0}
+        assert self.summary.get_base_counts_for_column(1) == expected
+    
+    def test_all_scores_for_column(self):
+        """[fastq] summary all scores for column"""
+        expected = numpy.array([ 17.,   5.,  17.], dtype=numpy.float32)
+        assert (self.summary.get_all_scores_for_column(1) == expected).all()
+    
+    def test_finite_scores_for_column(self):
+        """[fastq] summary finite scores for column"""
+        expected = numpy.array([ 17.], dtype=numpy.float32)
+        assert (self.summary.get_finite_scores_for_column(101) == expected).all()
+
+    def test_nan_count_for_column(self):
+        """[fastq] summary NaN count for column"""
+        assert self.summary.get_nan_count_for_column(101) == 2
+        
+    def test_quality_min_for_column(self):
+        """[fastq] summary quality min for column"""
+        assert self.summary.get_quality_min_for_column(1) == 5.0
+
+    def test_quality_max_for_column(self):
+        """[fastq] summary quality max for column"""
+        assert self.summary.get_quality_max_for_column(1) == 17.0
+    
+    def test_quality_average_for_column(self):
+        """[fastq] summary average quality for column"""
+        assert self.summary.get_quality_average_for_column(1) == 13.0
+    
+    def test_quality_std_deviation_for_column(self):
+        """[fastq] summary quality standard deviation for column"""
+        self.assertAlmostEqual(self.summary.get_quality_std_deviation_for_column(1), 6.9282032302755088, 2)
+    
+    def test_summary_for_column(self):
+        """[fastq] summary for column"""
+        expected = {'quality_stddev': 6.9282032302755088, 'column': 1, 'quality_avg': 13.0, 'quality_max': 17.0, 'quality_min': 5.0, 'reads': 3, 'nans': 0}
+        observed = self.summary.get_summary_for_column(1)
+        for element in observed:
+            self.assertAlmostEqual(observed[element], expected[element], 2)
+        
 class TestFastqReader(unittest.TestCase):
+    """test ability to parse fastq files"""
     def setUp(self):
         # switch to this directory - so we can have access to data
         os.chdir(os.path.dirname(os.path.abspath( __file__ )))
         seq = 'test-data/sequence.fastq'
-        self.seq = fastq.fastqReader(seq)
+        self.seq = fastq.FastqReader(seq)
 
     def runTest(self):
         """[fastq] reader"""
@@ -230,16 +420,60 @@ class TestFastqReader(unittest.TestCase):
             assert v.get_quality_string('ascii') == fastq_sequence[k][2]
             assert (v.quality == fastq_sequence[k][3]).all()
 
-class TestFastqMethods(unittest.TestCase):
+class TestFastqWriter(unittest.TestCase):
+    """test ability to write fastq files"""
     def setUp(self):
-        self.s = fastq.fastqSequencingRead()
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
+        fastq_file = 'test-data/sequence.fastq'
+        self.seq = fastq.FastqReader(fastq_file)
+    
+    def _read_raw_contents(self, file):
+        return open(file).read()
+    
+    def test_fastq_write_sanger_format(self):
+        """[fastq] fastq writing (sanger format)"""
+        outf = fastq.FastqWriter('test-output/test_write.fastq')
+        for s in self.seq:
+            outf.write(s)
+        outf.close()
+        old = self._read_raw_contents('test-data/sequence.fastq')
+        new = self._read_raw_contents('test-output/test_write.fastq')
+        assert old == new
+    
+    def test_fastq_write_solexa_format(self):
+        """[fastq] fastq writing (solexa format)"""
+        outf = fastq.FastqWriter('test-output/test_write.fastq', format='solexa')
+        for s in self.seq:
+            outf.write(s)
+        outf.close()
+        old = self._read_raw_contents('test-data/sequence.solexa.fastq')
+        new = self._read_raw_contents('test-output/test_write.fastq')
+        assert old == new
+    
+    def test_fastq_write_illumina_format(self):
+        """[fastq] fastq writing (illumina format)"""
+        outf = fastq.FastqWriter('test-output/test_write.fastq', format='illumina')
+        for s in self.seq:
+            outf.write(s)
+        outf.close()
+        old = self._read_raw_contents('test-data/sequence.illumina.fastq')
+        new = self._read_raw_contents('test-output/test_write.fastq')
+        assert old == new
+
+    def tearDown(self):
+        os.remove('test-output/test_write.fastq')
+
+class TestFastqTrimmingMaskingAndSlicingMethods(unittest.TestCase):
+    """test snapshotting, trimming, masking, masking and trimmming, and slicing"""
+    def setUp(self):
+        self.s = fastq.FastqSequencingRead()
         self.s.identifier = "@chr5_6255117_6255601_0:0:0_1:0:0_13/1"
         self.s.sequence = "CTTGGATCAGATGAAAATGCAGCTTGTATTTAATCTGGCAAAGAGCCTACGTGTATTGTGTCCAGTGGGAACAATGCTATGTCACCGAGTCTGTAAGAAT"
         self.s.set_quality("&&22$22222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222&%$")
     
     def test_snapshot(self):
         """[fastq] snapshot the untrimmed sequence"""
-        self.s.trim(5)
+        self.s.trim(5, clone = False)
         self.failIfEqual(self.s.sequence, self.s.sequence_snapshot)
         self.failIfEqual(self.s.quality, self.s.quality_snapshot)
         assert self.s.sequence_snapshot == "CTTGGATCAGATGAAAATGCAGCTTGTATTTAATCTGGCAAAGAGCCTACGTGTATTGTGTCCAGTGGGAACAATGCTATGTCACCGAGTCTGTAAGAAT"
@@ -253,7 +487,7 @@ class TestFastqMethods(unittest.TestCase):
     
     def test_trim_5_bases(self):
         """[fastq] trim bases w/ quality < 5"""
-        self.s.trim(5)
+        self.s.trim(5, clone = False)
         assert self.s.sequence == "CTTGGATCAGATGAAAATGCAGCTTGTATTTAATCTGGCAAAGAGCCTACGTGTATTGTGTCCAGTGGGAACAATGCTATGTCACCGAGTCTGTAAGA"
         correct_qual_trim = numpy.array([ 5,  5, 17, 17, 3, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
                17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
@@ -269,7 +503,7 @@ class TestFastqMethods(unittest.TestCase):
         
     def test_trim_10_bases(self):
         """[fastq] trim bases w/ quality < 10"""
-        self.s.trim(10)
+        self.s.trim(10, clone = False)
         assert self.s.sequence == "TGGATCAGATGAAAATGCAGCTTGTATTTAATCTGGCAAAGAGCCTACGTGTATTGTGTCCAGTGGGAACAATGCTATGTCACCGAGTCTGTAAG"
         correct_qual_trim = numpy.array([ 17, 17, 3, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
                17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
@@ -285,7 +519,7 @@ class TestFastqMethods(unittest.TestCase):
     
     def test_trim_no_bases(self):
         """[fastq] don't trim below min_qual"""
-        self.s.trim(0)
+        self.s.trim(0, clone = False)
         assert self.s.sequence == "CTTGGATCAGATGAAAATGCAGCTTGTATTTAATCTGGCAAAGAGCCTACGTGTATTGTGTCCAGTGGGAACAATGCTATGTCACCGAGTCTGTAAGAAT"
         assert (self.s.quality == numpy.array([ 5,  5, 17, 17, 3, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
                17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
@@ -300,7 +534,7 @@ class TestFastqMethods(unittest.TestCase):
     
     def test_mask_5_bases(self):
         """[fastq] mask bases w/ quality < 5"""
-        self.s.mask(5)
+        self.s.mask(5, clone = False)
         assert self.s.sequence == "CTTGNATCAGATGAAAATGCAGCTTGTATTTAATCTGGCAAAGAGCCTACGTGTATTGTGTCCAGTGGGAACAATGCTATGTCACCGAGTCTGTAAGANN"
         assert (self.s.quality == numpy.array([ 5,  5, 17, 17,  0, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
                17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
@@ -317,7 +551,7 @@ class TestFastqMethods(unittest.TestCase):
     
     def test_mask_and_trim_5_bases(self):
         """[fastq] mask and trim bases (edges) where quality < 5"""
-        self.s.mask_and_trim(5)
+        self.s.mask_and_trim(5, clone = False)
         assert self.s.sequence == "CTTGNATCAGATGAAAATGCAGCTTGTATTTAATCTGGCAAAGAGCCTACGTGTATTGTGTCCAGTGGGAACAATGCTATGTCACCGAGTCTGTAAGA"
         assert (self.s.quality == numpy.array([ 5,  5, 17, 17,  0, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
                17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
@@ -344,36 +578,6 @@ class TestFastqMethods(unittest.TestCase):
         assert (new.quality == numpy.array([17, 17, 17, 17, 17, 17, 17, 17, 17, 17])).all()
         # check to make sure object is cloned
         self.assertEqual(id(self.s), id(new))
-    
-class TestSangerQualitySpecMethods(unittest.TestCase):
-    
-    def setUp(self):
-        self.s = fastq.fastqSequencingRead()
-        self.s.sequence = "CTTGGATCAGATGAAAATGCAGCTTGTATTTAATCTGGCAAAGAGCCTACGTGTATTGTGTCCAGTGGGAACAATGCTATGTCACCGAGTCTGTAAGAAT"
-    
-    def test_fastq_is_valid_quality_format(self):
-        """[fastq] test valid sanger quality format"""
-        self.s.set_quality('&&22$22222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222&%$')
-        self.failUnless(self.s.quality.any())
-        
-    def test_fastq_invalid_format_fails(self):
-        """[fastq] test invalid quality formats (space in fastq)"""
-        self.failUnlessRaises(AssertionError, self.s.set_quality, ' &22$22222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222&%$')
-
-class TestNonSangerQualitySpecMethods(unittest.TestCase):    
-    
-    def setUp(self):
-        self.s = fastq.fastqSequencingRead.get_class_by_format('solexa')()
-        self.s.sequence = "CTTGGATCAGATGAAAATGCAGCTTGTATTTAATCTGGCAAAGAGCCTACGTGTATTGTGTCCAGTGGGAACAATGCTATGTCACCGAGTCTGTAAGAAT"
-    
-    def test_fastq_valid_quality_format(self):
-        """[fastq] test valid solexa quality format"""
-        self.s.set_quality('CCQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQCB@')
-        self.failUnless(self.s.quality.any())
-    
-    def test_fastq_invalid_format_fails2(self):
-        """[fastq] test invalid quality formats (incorrect ascii character)"""
-        self.failUnlessRaises(AssertionError, self.s.set_quality, '&&22$22222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222&%$')
 
         
 fastq_sequence = (

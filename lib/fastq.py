@@ -1,47 +1,46 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-"""
-fastq.py
+"""classes and methods for dealing with fastq-formatted files
 
-These files (fasta.py, fastq.py, transform.py, sequence.py) are originally part of the galaxy-dist 
-package (http://bitbucket.org/galaxy/galaxy-dist/src/), and these particular classes, methods, and 
-functions were created by Dan Blankenberg.  
+Copyright (c) 2010 Brant C. Faircloth. All rights reserved.
 
-See Blankenberg et al. doi:  10.1093/bioinformatics/btq281
+These files (fasta.py, fastq.py, transform.py, sequence.py) contain code and
+ideas derived from galaxy-dist (http://bitbucket.org/galaxy/galaxy-dist/src/).
+The original files were created by Dan Blankenberg.  See:
 
-I have modified the original source, changing the way that quality scores are stored and used
-(all quality scores as numpy arrays in sanger phred values with methods to convert and display as
-string), and addind additional method to several of the classes (e.g. trimming within 
-sequence.SequenceRead - subclassed by both fasta and fastq).  I also altered methods and class 
-method to use numpy methods within functions, where possible.  Finally, i slightly changed how 
+Blankenberg et al.  doi:  10.1093/bioinformatics/btq281
+
+I have modified the original source, changing the way that quality scores are
+stored and used (all quality scores are stored as numpy arrays in sanger-spec
+integer (phred) values with methods to convert and display the array as a
+standard quality string).  I've added additional methods to several of the
+classes (e.g. trimming within sequence.SequenceRead - subclassed by both fasta
+and fastq), and I altered methods and class methods to use numpy methods
+within functions, for speed and where possible.  Finally, i slightly changed
 how fasta and fastq files are read.
-
-The original the code was Copyright (c) 2005 Pennsylvania State University.  See my 
-LICENSE file for the license and Copyright of the current code (also BSD).
 
 This file incorporates code covered by the following terms:
 
-        Copyright (c) 2005 Pennsylvania State University
+Copyright (c) 2005 Pennsylvania State University
 
-        Permission is hereby granted, free of charge, to any person obtaining
-        a copy of this software and associated documentation files (the
-        "Software"), to deal in the Software without restriction, including
-        without limitation the rights to use, copy, modify, merge, publish,
-        distribute, sublicense, and/or sell copies of the Software, and to
-        permit persons to whom the Software is furnished to do so, subject to
-        the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-        The above copyright notice and this permission notice shall be
-        included in all copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-        EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-        MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-        IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-        CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-        TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-        SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 """
 
@@ -54,7 +53,8 @@ from sequence import SequencingRead
 
 import pdb
 
-class fastqSequencingRead(SequencingRead):
+class FastqSequencingRead(SequencingRead):
+    """Represents fastq sequences, attributes, and methods.  Default `type` is using Sanger-bases qualities"""
     format = 'sanger'
     ascii_min = 33
     ascii_max = 126
@@ -65,29 +65,28 @@ class fastqSequencingRead(SequencingRead):
     
     @classmethod
     def get_class_by_format(cls, format):
-        """return class of a format"""
+        """return the class of a fastq read and its associated attributes"""
         assert format in FASTQ_FORMATS.keys(), 'Unknown format type specified: %s' % format
         return FASTQ_FORMATS[ format ]
     
     @classmethod
     def convert_score_phred_to_solexa(cls, quality_array):
-        """convert phred quality scores to solexa quality scores and return array of values"""
+        """return an array of quality scores converted from the phred to solexa scoring system"""
         quality_array[numpy.where(quality_array <= 0)[0]] = -5
         return numpy.around(10.0 * numpy.log10(pow(10.0, quality_array/10.0) - 1.0)).astype('uint8')
     
     @classmethod
     def convert_score_solexa_to_phred(cls, quality_array):
-        """convert solexa quality scores to phred quality scores and return array of values"""
+        """return an array of quality scores converted from the solexa to phred scoring system"""
         return numpy.around(10.0 * numpy.log10(pow(10.0, quality_array/10.0) + 1.0)).astype('uint8')
     
     @classmethod
     def restrict_scores_to_valid_range(cls, quality_array):
-        """limit scores in the quality array to the class maximum and return ceil(array)"""
+        """return an array of scored limited to the range of the (format) class maximum"""
         return quality_array.clip(max=cls.quality_max)
-
+    
     def set_quality(self, quality_string):
-        """parse ASCII and QUAL strings into and unsigned integer array and set the quality 
-        attribute.  typically overrides sequence.SequencingRead.set_quality()"""
+        """return ASCII and QUAL strings parsed as numpy.array([], dtype=uint8)"""
         quality_string = quality_string.strip()
         if ' ' in quality_string or '\t' in quality_string:
             self.quality = self._get_qual_array_from_decimal(quality_string)
@@ -97,14 +96,14 @@ class fastqSequencingRead(SequencingRead):
             self.quality = self._get_qual_array_from_ascii(temp_array)
             self.assert_sequence_quality_lengths()
         else:
-            self.quality = None
+            self.quality = numpy.array([None])
     
     def _get_qual_array_from_ascii(self, quality_array):
-        """PRIVATE helper to parse an ASCII quality string and return an unsigned integer array of quality values"""
+        """PRIVATE: help parse an ASCII quality string and return an unsigned integer array of quality values"""
         return (quality_array - self.ascii_min + self.quality_min).astype('uint8')
     
     def get_quality_string(self, qtype = 'decimal'):
-        """format and return the quality array as string in decimal (default) or ascii format"""
+        """return the quality string of a given array in either decimal or ascii format"""
         if self.quality.any() and qtype == 'decimal':
             return ' '.join(self.quality.astype('|S2'))
         elif self.quality.any() and qtype == 'ascii':
@@ -112,10 +111,16 @@ class fastqSequencingRead(SequencingRead):
             # "@".  strip those, return the string.)
             return (self.quality + self.ascii_min - (self.quality_min)).astype('uint8').tostring()
         else:
-            return None
+            raise ValueError, "Sequence has no quality values"
 
     def convert_read_to_format(self, format):
-        """convert reads between formats and return a new fastq object (of `format` class)"""
+        """return an object converted from current format to requested format
+        
+        Convert an object from it's current format (self.format) to the
+        requested format, which must be of the following type and scoring
+        system: fasta, solexa, illumina.
+        
+        """
         assert format in FASTQ_FORMATS, 'Unknown format type specified: %s' % format
         new_class = FASTQ_FORMATS[ format ]
         new_read = new_class()
@@ -133,66 +138,28 @@ class fastqSequencingRead(SequencingRead):
         return new_read
     
     def get_sequence(self):
-        """return sequence"""
+        """return the string sequence of a read"""
         return self.sequence
     
-    #def slice(self, left_column_offset, right_column_offset):
-    #    """slice sequence (and quality) from left, right, or left and right and returna new fastqSequencingRead object"""
-    #    new_read = fastqSequencingRead.get_class_by_format(self.format)()
-    #    new_read.identifier = self.identifier
-    #    new_read.sequence = self.get_sequence()[left_column_offset:right_column_offset]
-    #    new_read.description = self.description
-    #    new_read.quality = self.quality[left_column_offset:right_column_offset]
-    #    return new_read
-    
     def is_valid_format(self, quality_string):
-        """ensure that quality values are within min-max range and return boolean result"""
+        """return BOOL indicating that ascii character values are within min-max for class/format"""
         if ((self.ascii_min <= quality_string) & (quality_string <= self.ascii_max)).all():
             return True
         else:
             return False
-        #if self.is_ascii_encoded():
-        #    for val in self.get_ascii_quality_scores():
-        #        val = ord( val )
-        #        if val < self.ascii_min or val > self.ascii_max:
-        #            return False
-        #else:
-        #    for val in self.get_decimal_quality_scores():
-        #        if val < self.quality_min or val > self.quality_max:
-        #            return False
-        #if not self.is_valid_sequence():
-        #    return False
-        #return True
     
-    def is_valid_sequence( self ):
-        for base in self.get_sequence():
-            if base not in self.valid_sequence_list:
-                return False
-        return True
-    
-    def insufficient_quality_length( self ):
-        return len(self.quality) < len(self.sequence)
+    def is_valid_quality_length( self ):
+        """return BOOL indicating that sequence contains legitimate base pairs"""
+        return len(self.quality) == len(self.sequence)
     
     def assert_sequence_quality_lengths(self):
+        """ensure sequence length = quality length"""
         q,s = len(self.quality), len(self.sequence)
         assert s == q, "Invalid FASTQ file: quality score length ({0}) does not match sequence length ({1})".format(q,s)
-    
-    def reverse( self, clone = True ):
-        # TODO:  remove this method?
-        #need to override how decimal quality scores are reversed
-        if clone:
-            rval = self.clone()
-        else:
-            rval = self
-        rval.sequence = transform.reverse( self.sequence )
-        if rval.is_ascii_encoded():
-            rval.quality = rval.quality[::-1]
-        else:
-            rval.quality = reversed( rval.get_decimal_quality_scores() )
-            rval.quality = "%s " % " ".join( map( str, rval.quality ) )
-        return rval
 
-class fastqSangerRead( fastqSequencingRead ):
+
+class FastqSangerRead(FastqSequencingRead):
+    """Represents valid attributed for sanger format sequence reads"""
     format = 'sanger'
     ascii_min = 33
     ascii_max = 126
@@ -201,7 +168,8 @@ class fastqSangerRead( fastqSequencingRead ):
     score_system = 'phred'
     sequence_space = 'base'
 
-class fastqIlluminaRead( fastqSequencingRead ):
+class FastqIlluminaRead(FastqSequencingRead):
+    """Represents valid attributed for illumina format sequence reads"""
     format = 'illumina'
     ascii_min = 64
     ascii_max = 126
@@ -210,7 +178,8 @@ class fastqIlluminaRead( fastqSequencingRead ):
     score_system = 'phred'
     sequence_space = 'base'
 
-class fastqSolexaRead( fastqSequencingRead ):
+class FastqSolexaRead(FastqSequencingRead):
+    """Represents valid attributed for solexa format sequence reads"""
     format = 'solexa'
     ascii_min = 59
     ascii_max = 126
@@ -220,282 +189,267 @@ class fastqSolexaRead( fastqSequencingRead ):
     sequence_space = 'base'
 
 FASTQ_FORMATS = {}
-for format in [ fastqIlluminaRead, fastqSolexaRead, fastqSangerRead ]:
+for format in [ FastqIlluminaRead, FastqSolexaRead, FastqSangerRead ]:
     FASTQ_FORMATS[ format.format ] = format
 
 
-class fastqAggregator( object ):
-    VALID_FORMATS = FASTQ_FORMATS.keys()
-    def __init__( self,  ):
-        self.ascii_values_used = [] #quick lookup of all ascii chars used
-        self.seq_lens = {} #counts of seqs by read len
-        self.nuc_index_quality = [] #counts of scores by read column
-        self.nuc_index_base = [] #counts of bases by read column
-    def consume_read( self, fastq_read ):
-        #ascii values used
-        for val in fastq_read.get_ascii_quality_scores():
-            if val not in self.ascii_values_used:
-                self.ascii_values_used.append( val )
-        #lengths
-        seq_len = len( fastq_read )
-        self.seq_lens[ seq_len ] = self.seq_lens.get( seq_len, 0 ) + 1
-        #decimal qualities by column
-        for i, val in enumerate( fastq_read.get_decimal_quality_scores() ):
-            if i == len( self.nuc_index_quality ):
-                self.nuc_index_quality.append( {} )
-            self.nuc_index_quality[ i ][ val ] = self.nuc_index_quality[ i ].get( val, 0 ) + 1
-        #bases by column
-        for i, nuc in enumerate( fastq_read.get_sequence() ):
-            if i == len( self.nuc_index_base ):
-                self.nuc_index_base.append( {} )
-            nuc = nuc.upper()
-            self.nuc_index_base[ i ][ nuc ] = self.nuc_index_base[ i ].get( nuc, 0 ) + 1
-    def get_valid_formats( self, check_list = None ):
-        if not check_list:
-            check_list = self.VALID_FORMATS
-        rval = []
-        sequence = []
-        for nuc_dict in self.nuc_index_base:
-            for nuc in nuc_dict.keys():
-                if nuc not in sequence:
-                    sequence.append( nuc )
-        sequence = "".join( sequence )
-        quality = "".join( self.ascii_values_used )
-        for fastq_format in check_list:
-            fastq_read = fastqSequencingRead.get_class_by_format( fastq_format )()
-            fastq_read.quality = quality
-            fastq_read.sequence = sequence
-            if fastq_read.is_valid_format():
-                rval.append( fastq_format )
-        return rval
-    def get_ascii_range( self ):
-        return ( min( self.ascii_values_used ), max( self.ascii_values_used ) )
-    def get_decimal_range( self ):
-        decimal_values_used = []
-        for scores in self.nuc_index_quality:
-            decimal_values_used.extend( scores.keys() )
-        return ( min( decimal_values_used ), max( decimal_values_used ) )
-    def get_length_counts( self ):
-        return self.seq_lens
-    def get_max_read_length( self ):
-        return len( self.nuc_index_quality )
-    def get_read_count_for_column( self, column ):
-        if column >= len( self.nuc_index_quality ):
-            return 0
-        return sum( self.nuc_index_quality[ column ].values() )
-    def get_read_count( self ):
-        return self.get_read_count_for_column( 0 )
-    def get_base_counts_for_column( self, column ):
-        return self.nuc_index_base[ column ]
-    def get_score_list_for_column( self, column ):
-        return self.nuc_index_quality[ column ].keys()
-    def get_score_min_for_column( self, column ):
-        return min( self.nuc_index_quality[ column ].keys() )
-    def get_score_max_for_column( self, column ):
-        return max( self.nuc_index_quality[ column ].keys() )
-    def get_score_sum_for_column( self, column ):
-        return sum( score * count for score, count in self.nuc_index_quality[ column ].iteritems() )
-    def get_score_at_position_for_column( self, column, position ):
-        score_value_dict = self.nuc_index_quality[ column ]
-        scores = sorted( score_value_dict.keys() )
-        for score in scores:
-            if score_value_dict[ score ] <= position:
-                position -= score_value_dict[ score ]
-            else:
-                return score
-    def get_summary_statistics_for_column( self, i ):
-        def _get_med_pos( size ):
-            halfed = int( size / 2 )
-            if size % 2 == 1:
-                return [ halfed ]
-            return[ halfed - 1, halfed ]
-        read_count = self.get_read_count_for_column( i )
-        
-        min_score = self.get_score_min_for_column( i )
-        max_score = self.get_score_max_for_column( i )
-        sum_score = self.get_score_sum_for_column( i )
-        mean_score = float( sum_score ) / float( read_count )
-        #get positions
-        med_pos = _get_med_pos( read_count )
-        if 0 in med_pos:
-            q1_pos = [ 0 ]
-            q3_pos = [ read_count - 1 ]
-        else:
-            q1_pos = _get_med_pos( min( med_pos ) )
-            q3_pos = []
-            for pos in q1_pos:
-                q3_pos.append( max( med_pos ) + 1 + pos )
-        #get scores at position
-        med_score = float( sum( [ self.get_score_at_position_for_column( i, pos ) for pos in med_pos ] ) ) / float( len( med_pos ) )
-        q1 = float( sum( [ self.get_score_at_position_for_column( i, pos ) for pos in q1_pos ] ) ) / float( len( q1_pos ) )
-        q3 = float( sum( [ self.get_score_at_position_for_column( i, pos ) for pos in q3_pos ] ) ) / float( len( q3_pos ) )
-        #determine iqr and step
-        iqr = q3 - q1
-        step = 1.5 * iqr
-        
-        #Determine whiskers and outliers
-        outliers = []
-        score_list = sorted( self.get_score_list_for_column( i ) )
-        left_whisker = q1 - step
-        for score in score_list:
-            if left_whisker <= score:
-                left_whisker = score
-                break
-            else:
-                outliers.append( score )
-        
-        right_whisker = q3 + step
-        score_list.reverse()
-        for score in score_list:
-            if right_whisker >= score:
-                right_whisker = score
-                break
-            else:
-                outliers.append( score )
-        
-        column_stats = { 'read_count': read_count, 
-                         'min_score': min_score, 
-                         'max_score': max_score, 
-                         'sum_score': sum_score, 
-                         'mean_score': mean_score, 
-                         'q1': q1, 
-                         'med_score': med_score, 
-                         'q3': q3, 
-                         'iqr': iqr, 
-                         'left_whisker': left_whisker, 
-                         'right_whisker': right_whisker,
-                         'outliers': outliers }
-        return column_stats
-
-class fastqReader( object ):
+class FastqSummarizer():
+    """Represents a class for deriving summary data across a number of reads.
+    Renamed from FastaAggregator in the original code
     
-    def __init__( self, fh, format = 'sanger' ):
-        self.file = open(fh)
+    >>> fastqs = fastq.FastqReader('../tests/test-data/sequence_for_summarizer.fastq')
+    >>> fastq_stats = fastq.FastqSummarizer()
+    >>> for read in fastqs:
+    ...    fastq_stats.add(read)
+    >>> # get summary values for a column - column[0] is the first base of all reads, 
+    >>> # so we are getting a summary of the first base positions across all reads in 
+    >>> # fastqs
+    >>> summary_stats = fastq_stats.get_summary_for_column(0)
+    
+    
+    """
+    def __init__(self):
+        self.lengths = {} #counts of seqs by read len
+        self.nucleotides = ('A','C','G','T','N')
+        self.positions = (0,1,2,3,4)
+        self.nucleotide_positions = dict(zip(self.nucleotides, self.positions))
+        self.bases = numpy.array([None]) # will be array to hold base counts
+        self.qualities = numpy.array([None]) # we be array to hold quality stack
+    
+    def _count_bases(self, sequence):
+        """PRIVATE: Return an array of base counts by column across all sequences
+        aggregated.
+        
+        The array returned looks something like the following, when several 
+        (n=2) sequences are aggregated:
+        
+            array([[ 0.,  1.,  0.,  1.,  0.],
+                   [ 0.,  0.,  0.,  2.,  0.],
+                   [ 0.,  0.,  0.,  2.,  0.],
+                   ...
+                   ])
+        
+        where each row represents a base position - thus row[0] is the count
+        for sequence position 0.  The values within the vector give the counts
+        of each possible base where the index is given in self.nucleotide_positions
+        (in __init__):
+        
+            self.nucleotide_positions = {'A':0, 'C':1, 'G':2, 'T':3, 'N':4}
+        
+        Using numpy arrays lets us quickly sum across columns or rows, making
+        summary stats easier.
+        
+        """
+        for k, base in enumerate(sequence):
+            if numpy.ndim(self.bases) == 1 and k == 0:
+                self.bases[self.nucleotide_positions[base]] += 1
+            elif (numpy.ndim(self.bases) == 1) or (numpy.ndim(self.bases) > 1 and k == len(self.bases)):
+                self.bases = numpy.vstack((self.bases, numpy.zeros(5)))
+                self.bases[k][self.nucleotide_positions[base]] += 1
+            else:
+                self.bases[k][self.nucleotide_positions[base]] += 1
+    
+    def _nans(self, shape, dtype=numpy.float32):
+        """PRIVATE helper method to return an array filled with NaNs"""
+        a = numpy.empty(shape, dtype)
+        a.fill(numpy.nan)
+        return a
+    
+    def _array_qualities(self, quality):
+        """PRIVATE: Return stacked quality arrays for reads into an array, buffering 
+        read lengths to maximum encountered by appending numpy.NaNs to shorter
+        reads.
+        
+        The returned array looks something like the following when several
+        (n=3) sequences are aggregated:
+        
+            array([[ 17.,  17.,  17.,  17.,  17.,  17.,  17.],
+                   [ 17.,  17.,  17.,  17.,  17.,  17.,  17.],
+                   [ 17.,  17.,  17.,  17.,  17.,  17.,  17..]], dtype=float32)
+        
+        where each row of values represents the quality array of a sequence.
+        Thus, we can min/max "down" columns to get the min/max over a particular
+        base, across reads to get the per-read min/max, or over the entire
+        array to get the overall min/max.
+        
+        """
+        if not quality.any():
+            raise ValueError, "There are no quality values"
+        # deal with freaking switcheroo in numpy.array([]).shape
+        if self.qualities.ndim == 1:
+            diff = len(quality) - self.qualities.shape[0]
+        else:
+            diff = len(quality) - self.qualities.shape[1]
+        if diff > 0:
+            # hstack the necessary array of NaNs (e.g. diff x self.qualities 
+            # length) - this is a little of a pain, but ensures we don't add
+            # zeros to the array when the value is actually Null/None.
+            self.qualities = numpy.hstack((self.qualities, 
+                        self._nans([self.qualities.shape[0], diff])))
+        # vstack quality
+        self.qualities = numpy.vstack((self.qualities, quality))
+    
+    def add(self, read):
+        """Add a read to the fastq aggregator
+        
+        In essence, we are building a "stack" of read data across all reads we 
+        `add`. In order to generate summary statistics across some number of 
+        reads, N, we need to add those reads to the aggregator, and then we 
+        can compute our summary values across the reads that we add.
+        
+        >>> fastqs = fastq.FastqReader('../tests/test-data/sequence_for_summarizer.fastq')
+        >>> fastq_stats = fastq.FastqSummarizer()
+        >>> for read in fastqs:
+        ...    fastq_stats.add(read)
+        
+        """
+        # do a quick basecount
+        if not self.bases.any():
+            self.bases = numpy.zeros(5, dtype = numpy.float32)
+        self._count_bases(read.sequence)
+        # stack the quality arrays
+        if not self.qualities.any():
+            self.qualities = read.quality
+        else:
+            self._array_qualities(read.quality)
+        # get dict of read lengths
+        l = len(read)
+        self.lengths[l] = self.lengths.get(l,0) + 1
+    
+    def get_decimal_range(self):
+        """Return a tuple giving the (min, max) quality values for aggregated
+        reads"""
+        return (numpy.nanmin(self.qualities), numpy.nanmax(self.qualities))
+    
+    def get_length_counts(self):
+        """Return a dictionary of read length counts"""
+        return self.lengths
+    
+    def get_max_read_length(self):
+        """Return the maximum read length"""
+        return max(self.lengths.keys())
+    
+    def get_min_read_length(self):
+        """Return the minumum read length"""
+        return min(self.lengths.keys())
+    
+    def get_read_count_for_column(self, column):
+        """Return the count of reads with a base in column"""
+        if self.qualities.ndim > 1 and column >= self.qualities.shape[1]:
+            return 0
+        elif self.qualities.ndim == 1 and column >= self.qualities.shape[0]:
+            return 0
+        else:
+            return sum(numpy.isfinite(self.qualities[:,column]))
+    
+    def get_read_count(self):
+        """Return the total count of reads"""
+        return self.get_read_count_for_column(0)
+    
+    def get_base_counts_for_column(self, column):
+        """Return a dictionary of counts for each base in a column"""
+        return dict(zip(self.nucleotides, self.bases[column]))
+    
+    def get_all_scores_for_column(self, column):
+        """Return an array of quality scores for a column, including any NaNs"""
+        return self.qualities[:, column]
+    
+    def get_finite_scores_for_column(self, column):
+        """Return an array of quality scores for a column, excluding any NaNs"""
+        return self.qualities[:, column][numpy.isfinite(self.qualities[:,column])]
+    
+    def get_nan_count_for_column(self, column):
+        """Return the count of NaNs for a column"""
+        return sum(numpy.isnan(self.qualities[:, column]))
+    
+    def get_quality_min_for_column(self, column):
+        """Return the minimum quality score for a column (always exludes NaNs)"""
+        return numpy.nanmin(self.qualities[:, column])
+    
+    def get_quality_max_for_column(self, column):
+        """Return the maximum quality score for a column (always exludes NaNs)"""
+        return numpy.nanmax(self.qualities[:, column])
+    
+    def get_quality_average_for_column(self, column):
+        """Return the average quality score for a column (always excludes NaNs)"""
+        return numpy.mean(self.get_finite_scores_for_column(column), dtype=numpy.float64)
+    
+    def get_quality_std_deviation_for_column(self, column):
+        """Return the standard deviation of the quality for a column (always excludes NaNs)"""
+        return numpy.std(self.get_finite_scores_for_column(column), ddof = 1, dtype=numpy.float64)
+    
+    def get_summary_for_column(self, column):
+        reads = self.get_read_count_for_column(column)
+        q_nans = self.get_nan_count_for_column(column)
+        q_mn = self.get_quality_min_for_column(column)
+        q_mx = self.get_quality_max_for_column(column)
+        q_avg = self.get_quality_average_for_column(column)
+        q_deviation = self.get_quality_std_deviation_for_column(column)
+        return {'reads':reads, 'nans':q_nans, 'quality_min':q_mn, 
+            'quality_max':q_mx, 'quality_avg':q_avg, 
+            'quality_stddev':q_deviation, 'column':column
+            }
+
+class FastqReader():
+    """Represents an iterator over fastaq sequences from a file"""
+    def __init__(self, fastq_file, format = 'sanger'):
+        self.file = open(fastq_file)
         self.format = format
         
-    def close( self ):
+    def close(self):
+        """close files"""
         return self.file.close()
         
     def next(self):
+        """read next fastq sequence"""
         while True:
             fastq_header = self.file.readline()
             if not fastq_header:
                 raise StopIteration
-            fastq_header = fastq_header.rstrip( '\n\r' )
+            fastq_header = fastq_header.rstrip('\n\r')
             #remove empty lines, apparently extra new lines at end of file is common?
             if fastq_header:
                 break
-                
-        assert fastq_header.startswith( '@' ), 'Invalid fastq header: %s' % fastq_header
-        rval = fastqSequencingRead.get_class_by_format(self.format)()        
+        assert fastq_header.startswith('@'), 'Invalid fastq header: %s' % fastq_header
+        rval = FastqSequencingRead.get_class_by_format(self.format)()        
         rval.identifier = fastq_header
         quality_string = ''
         while True:
             line = self.file.readline()
             if not line:
-                raise Exception( 'Invalid FASTQ file: could not parse second instance of sequence identifier.' )
-            line = line.rstrip( '\n\r' )
-            if line.startswith( '+' ) and ( len( line ) == 1 or line[1:].startswith( fastq_header[1:] ) ):
+                raise Exception('Invalid FASTQ file: could not parse second instance of sequence identifier.')
+            line = line.rstrip('\n\r')
+            if line.startswith('+') and (len(line) == 1 or line[1:].startswith(fastq_header[1:])):
                 rval.description = line
                 break
-            rval.append_sequence( line )
+            rval.append_sequence(line)
         while len(quality_string) < len(rval.sequence):
             line = self.file.readline()
             if not line:
                 break
             quality_string = ''.join([quality_string, line.strip()])
         rval.set_quality(quality_string)
-        # ensure quality == sequence length
         rval.assert_sequence_quality_lengths()
         return rval
     
     def __iter__( self ):
+        """iterator"""
         while True:
             yield self.next()
 
-class fastqWriter( object ):
-    
-    def __init__( self, fh, format = None, force_quality_encoding = None ):
-        self.file = fh
+class FastqWriter():
+    """Write fastq objects to a file"""
+    def __init__(self, fastq_file, format = None):
+        """set the sequence output file"""
+        self.sequence_file = open(fastq_file, 'w')
         self.format = format
-        self.force_quality_encoding = force_quality_encoding
     
-    def write( self, fastq_read ):
+    def write(self, fastq, qtype='ascii'):
+        """write fastaSequence objects to a file"""
         if self.format:
-            fastq_read = fastq_read.convert_read_to_format( self.format, force_quality_encoding = self.force_quality_encoding )
-        self.file.write(str(fastq_read))
+            fastq = fastq.convert_read_to_format(self.format)
+        self.sequence_file.write("{0}\n{1}\n+\n{2}\n".format(fastq.identifier, fastq.sequence, fastq.get_quality_string(qtype=qtype)))
     
     def close( self ):
-        return self.file.close()
-
-class fastqJoiner( object ):
-    
-    def __init__( self, format, force_quality_encoding = None ):
-        self.format = format
-        self.force_quality_encoding = force_quality_encoding
-    
-    def join( self, read1, read2 ):
-        if read1.identifier.endswith( '/2' ) and read2.identifier.endswith( '/1' ):
-            #swap 1 and 2
-            tmp = read1
-            read1 = read2
-            read2 = tmp
-            del tmp
-        if read1.identifier.endswith( '/1' ) and read2.identifier.endswith( '/2' ):
-            identifier = read1.identifier[:-2]
-        else:
-            identifier = read1.identifier
-        
-        #use force quality encoding, if not present force to encoding of first read
-        force_quality_encoding = self.force_quality_encoding
-        if not force_quality_encoding:
-            if read1.is_ascii_encoded():
-                force_quality_encoding = 'ascii'
-            else:
-                force_quality_encoding = 'decimal'
-        
-        new_read1 = read1.convert_read_to_format( self.format, force_quality_encoding = force_quality_encoding )
-        new_read2 = read2.convert_read_to_format( self.format, force_quality_encoding = force_quality_encoding )
-        rval = FASTQ_FORMATS[ self.format ]()
-        rval.identifier = identifier
-        if len( read1.description ) > 1:
-            rval.description = "+%s" % ( identifier[1:] )
-        else:
-            rval.description = '+'
-        if rval.sequence_space == 'color':
-            #need to handle color space joining differently
-            #convert to nuc space, join, then convert back
-            rval.sequence = rval.convert_base_to_color_space( new_read1.convert_color_to_base_space( new_read1.sequence ) + new_read2.convert_color_to_base_space( new_read2.sequence ) )
-        else:
-            rval.sequence = new_read1.sequence + new_read2.sequence
-        if force_quality_encoding == 'ascii':
-            rval.quality = new_read1.quality + new_read2.quality
-        else:
-            rval.quality = "%s %s" % ( new_read1.quality.strip(), new_read2.quality.strip() )
-        return rval
-    
-    def get_paired_identifier( self, fastq_read ):
-        identifier = fastq_read.identifier
-        if identifier[-2] == '/':
-            if identifier[-1] == "1":
-                identifier = "%s2" % identifier[:-1]
-            elif identifier[-1] == "2":
-                identifier = "%s1" % identifier[:-1]
-        return identifier
-
-class fastqSplitter( object ):   
-    def split( self, fastq_read ):
-        length = len( fastq_read )
-        #Only reads of even lengths can be split
-        if length % 2 != 0:
-            return None, None
-        half = int( length / 2 )
-        read1 = fastq_read.slice( 0, half )
-        read1.identifier += "/1"
-        if len( read1.description ) > 1:
-            read1.description += "/1"
-        read2 = fastq_read.slice( half, None )
-        read2.identifier += "/2"
-        if len( read2.description ) > 1:
-            read2.description += "/2"
-        return read1, read2
+        """close output files"""
+        return self.sequence_file.close()
