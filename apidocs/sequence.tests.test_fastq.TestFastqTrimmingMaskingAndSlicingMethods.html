@@ -1,0 +1,253 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "DTD/xhtml1-strict.dtd">
+<html>
+  <head>
+    <title>sequence.tests.test_fastq.TestFastqTrimmingMaskingAndSlicingMethods : API documentation</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+    <link href="apidocs.css" type="text/css" rel="stylesheet" />
+    
+    
+  </head>
+  <body>
+    <h1 class="class">s.t.t.TestFastqTrimmingMaskingAndSlicingMethods(<span title="unittest.TestCase">unittest.TestCase</span>) : class documentation</h1>
+    <p>
+      <span id="part">Part of <a href="sequence.html">sequence</a>.<a href="sequence.tests.html">tests</a>.<a href="sequence.tests.test_fastq.html">test_fastq</a></span>
+      
+      <a href="classIndex.html#sequence.tests.test_fastq.TestFastqTrimmingMaskingAndSlicingMethods">View In Hierarchy</a>
+    </p>
+    <div>
+      
+    </div>
+    <div>test snapshotting, trimming, masking, masking and trimmming, and 
+slicing<table class="fieldTable"></table></div>
+
+    
+    
+    <div id="splitTables">
+      <table class="children sortable" id="id37">
+  
+  
+<tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.tests.test_fastq.TestFastqTrimmingMaskingAndSlicingMethods.html#setUp">setUp</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.tests.test_fastq.TestFastqTrimmingMaskingAndSlicingMethods.html#test_snapshot">test_snapshot</a></td>
+    <td><span>[fastq] snapshot the untrimmed sequence</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.tests.test_fastq.TestFastqTrimmingMaskingAndSlicingMethods.html#test_trim_5_bases">test_trim_5_bases</a></td>
+    <td><span>[fastq] trim bases w/ quality &lt; 5</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.tests.test_fastq.TestFastqTrimmingMaskingAndSlicingMethods.html#test_trim_10_bases">test_trim_10_bases</a></td>
+    <td><span>[fastq] trim bases w/ quality &lt; 10</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.tests.test_fastq.TestFastqTrimmingMaskingAndSlicingMethods.html#test_trim_no_bases">test_trim_no_bases</a></td>
+    <td><span>[fastq] don't trim below min_qual</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.tests.test_fastq.TestFastqTrimmingMaskingAndSlicingMethods.html#test_mask_5_bases">test_mask_5_bases</a></td>
+    <td><span>[fastq] mask bases w/ quality &lt; 5</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.tests.test_fastq.TestFastqTrimmingMaskingAndSlicingMethods.html#test_mask_and_trim_5_bases">test_mask_and_trim_5_bases</a></td>
+    <td><span>[fastq] mask and trim bases (edges) where quality &lt; 5</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.tests.test_fastq.TestFastqTrimmingMaskingAndSlicingMethods.html#test_fastq_clone_and_slice">test_fastq_clone_and_slice</a></td>
+    <td><span>[fastq] clone and slice</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.tests.test_fastq.TestFastqTrimmingMaskingAndSlicingMethods.html#test_fastq_no_clone_and_slice">test_fastq_no_clone_and_slice</a></td>
+    <td><span>[fastq] slice without cloning</span></td>
+  </tr>
+  
+</table>
+      
+      
+    </div>
+    
+    
+    
+
+    <div class="function">
+  <a name="sequence.tests.test_fastq.TestFastqTrimmingMaskingAndSlicingMethods.setUp">
+    
+  </a>
+  <a name="setUp">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    setUp(self):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div class="undocumented">Undocumented</div>
+  </div>
+</div><div class="function">
+  <a name="sequence.tests.test_fastq.TestFastqTrimmingMaskingAndSlicingMethods.test_snapshot">
+    
+  </a>
+  <a name="test_snapshot">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test_snapshot(self):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>[fastq] snapshot the untrimmed sequence<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.tests.test_fastq.TestFastqTrimmingMaskingAndSlicingMethods.test_trim_5_bases">
+    
+  </a>
+  <a name="test_trim_5_bases">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test_trim_5_bases(self):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>[fastq] trim bases w/ quality &lt; 5<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.tests.test_fastq.TestFastqTrimmingMaskingAndSlicingMethods.test_trim_10_bases">
+    
+  </a>
+  <a name="test_trim_10_bases">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test_trim_10_bases(self):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>[fastq] trim bases w/ quality &lt; 10<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.tests.test_fastq.TestFastqTrimmingMaskingAndSlicingMethods.test_trim_no_bases">
+    
+  </a>
+  <a name="test_trim_no_bases">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test_trim_no_bases(self):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>[fastq] don't trim below min_qual<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.tests.test_fastq.TestFastqTrimmingMaskingAndSlicingMethods.test_mask_5_bases">
+    
+  </a>
+  <a name="test_mask_5_bases">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test_mask_5_bases(self):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>[fastq] mask bases w/ quality &lt; 5<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.tests.test_fastq.TestFastqTrimmingMaskingAndSlicingMethods.test_mask_and_trim_5_bases">
+    
+  </a>
+  <a name="test_mask_and_trim_5_bases">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test_mask_and_trim_5_bases(self):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>[fastq] mask and trim bases (edges) where quality &lt; 5<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.tests.test_fastq.TestFastqTrimmingMaskingAndSlicingMethods.test_fastq_clone_and_slice">
+    
+  </a>
+  <a name="test_fastq_clone_and_slice">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test_fastq_clone_and_slice(self):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>[fastq] clone and slice<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.tests.test_fastq.TestFastqTrimmingMaskingAndSlicingMethods.test_fastq_no_clone_and_slice">
+    
+  </a>
+  <a name="test_fastq_no_clone_and_slice">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test_fastq_no_clone_and_slice(self):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>[fastq] slice without cloning<table class="fieldTable"></table></div>
+  </div>
+</div>
+    <address>
+      <a href="index.html">API Documentation</a> for sequence, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at 2011-03-25 12:10:35.
+    </address>
+  </body>
+</html>
