@@ -47,7 +47,7 @@ SOFTWARE.
 import pdb
 import copy
 import numpy
-from demuxipy.lib import sequence
+import sequence
 
 class FastaSequence(sequence.SequencingRead):
     """Represents fasta and fasta + qual sequences, attributes, and methods

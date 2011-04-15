@@ -15,7 +15,7 @@ import os
 import tempfile
 import multiprocessing
 
-import pdb
+#import pdb
 
 def file_type(input):
     """given an input file, determine the type and return both type and record delimiter (> or @)"""
