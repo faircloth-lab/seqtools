@@ -227,9 +227,9 @@ class FastaWriter():
             
     def write(self, fasta, qual=False):
         """write FastaSequence objects to a file"""
-        self.sequence_file.write(">{0}\n{1}\n".format(fasta.identifier[1:], fasta.sequence))
+        self.sequence_file.write(">{0}\n{1}\n".format(fasta.identifier.lstrip('>'), fasta.sequence))
         if self.qual_file:
-            self.qual_file.write(">{0}\n{1}\n".format(fasta.identifier[1:], fasta.get_quality_string()))
+            self.qual_file.write(">{0}\n{1}\n".format(fasta.identifier.lstrip('>'), fasta.get_quality_string()))
     
     def close(self):
         """close output files"""
