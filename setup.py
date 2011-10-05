@@ -11,7 +11,7 @@ if __name__ == '__main__':
         author="Brant Faircloth",
         author_email="brant.faircloth+seqtools@gmail.com ",
         url="http://github.com/faircloth-lab/seqtools/",
-        license="BSD",
+        license="http://www.opensource.org/licenses/BSD-3-Clause",
         classifiers=[
             'Development Status :: 4 - Beta',
             'Environment :: Console',
