@@ -17,16 +17,17 @@ Installation
 ------------
 
 - from source
-::
-    tar -xzvf ~/your/download/location/seqtools.*.tar.gz
+    ::
+        tar -xzvf ~/your/download/location/seqtools.*.tar.gz
+        python setup.py install
 
 - using easy_install
-::
-    easy_install seqtools
+    ::
+        easy_install seqtools
 
 - using pip
-::
-    pip install seqtools
+    ::
+        pip install seqtools
 
 Tests
 -----
