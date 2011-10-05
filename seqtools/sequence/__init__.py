@@ -36,3 +36,4 @@ import fastq
 import fops
 import sequence
 import transform
+from tests import test
