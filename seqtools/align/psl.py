@@ -1,7 +1,7 @@
 from math import log
 from collections import namedtuple
 
-import pdb
+#import pdb
 
 class PslReader():
     """Represents an iterator over psl files from blat"""

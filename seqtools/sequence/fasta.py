@@ -44,10 +44,11 @@ SOFTWARE.
 
 """
 
-import pdb
 import copy
 import numpy
 import sequence
+
+#import pdb
 
 class FastaSequence(sequence.SequencingRead):
     """Represents fasta and fasta + qual sequences, attributes, and methods

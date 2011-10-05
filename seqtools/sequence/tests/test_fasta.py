@@ -13,7 +13,7 @@ import numpy
 import unittest
 from seqtools.sequence import fasta
 
-import pdb
+#import pdb
 
 class TestSequenceSetQuality(unittest.TestCase):
     def setUp(self):

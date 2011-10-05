@@ -51,7 +51,7 @@ import string
 import transform
 from sequence import SequencingRead
 
-import pdb
+#import pdb
 
 class FastqSequencingRead(SequencingRead):
     """Represents fastq sequences, attributes, and methods.  Default `type` is using Sanger-bases qualities"""

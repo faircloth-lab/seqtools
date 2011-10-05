@@ -14,7 +14,7 @@ import unittest
 import multiprocessing
 from seqtools.sequence import fops
 
-import pdb
+#import pdb
 
 class TestFopsFunctions(unittest.TestCase):
     def test_chunking_by_pieces(self):

@@ -27,6 +27,8 @@ SOFTWARE.
 
 import string
 
+#import pdb
+
 #Translation table for reverse Complement, with ambiguity codes
 DNA_COMPLEMENT = string.maketrans( "ACGTRYKMBDHVacgtrykmbdhv", "TGCAYRMKVHDBtgcayrmkvhdb" )
 RNA_COMPLEMENT = string.maketrans( "ACGURYKMBDHVacgurykmbdhv", "UGCAYRMKVHDBugcayrmkvhdb" )

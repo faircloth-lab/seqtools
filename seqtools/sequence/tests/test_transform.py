@@ -15,7 +15,7 @@ import unittest
 import exceptions
 from seqtools.sequence import transform
 
-import pdb
+#import pdb
 
 class TestFastqClassMethods(unittest.TestCase):
     def setUp(self):

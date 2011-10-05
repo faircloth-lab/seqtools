@@ -49,6 +49,8 @@ import string
 import transform
 from copy import deepcopy
 
+#import pdb
+
 class SequencingRead():
     """A generic class encapuslating DNA sequence related methods and attributes"""
     valid_sequence_list = string.letters

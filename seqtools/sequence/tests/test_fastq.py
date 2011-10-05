@@ -51,7 +51,7 @@ import cPickle
 import unittest
 from seqtools.sequence import fastq
 
-import pdb
+#import pdb
 
 class TestSangerQualitySpecMethods(unittest.TestCase):
     """Ensure that invalid Sanger quality values fail"""
