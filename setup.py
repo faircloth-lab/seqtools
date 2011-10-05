@@ -22,16 +22,17 @@ if __name__ == '__main__':
             'Topic :: Scientific/Engineering :: Bio-Informatics',
              ],
         requires=['NumPy (>=1.3)',],
-        long_description=open('README.txt').read(),
+        long_description=open('README.rst').read(),
         package_data = {
                 # If any package contains *.txt or *.rst files, include them:
                 '': ['*.txt', '*.rst'],
                 'sequence': ['tests/test-data/*'],
             },
         packages=[
-                    'align',
-                    'fs',
-                    'sequence',
-                    'sequence.tests'
+                    'seqtools',
+                    'seqtools.align',
+                    'seqtools.fs',
+                    'seqtools.sequence',
+                    'seqtools.sequence.tests'
                 ],
         )
