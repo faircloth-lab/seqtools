@@ -46,7 +46,12 @@ and seqtools_ run the tests using:
 >>> from seqtools import sequence
 >>> sequence.test()
 
-Alternatively, after installing numpy_ and seqtools_ you can run the tests using:::
+
+Alternatively, you can run:::
+
+    python setup.py test
+
+Or, after installing numpy_ and seqtools_ you can run the tests using:::
 
     python seqtools/sequence/tests/run.py
 
