@@ -21,7 +21,7 @@ seqtools_:
 
 - from source::
 
-    tar -xzvf ~/your/download/location/seqtools.*.tar.gz
+    tar -xzvf ~/your/download/location/seqtools-*.tar.gz
     python setup.py install
 
 - using easy_install::
