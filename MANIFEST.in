@@ -1,0 +1,2 @@
+recursive-include seqtools/sequence/tests/test-data *.*
+recursive-include seqtools/sequence/tests/test-output *.*

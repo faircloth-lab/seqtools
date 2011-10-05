@@ -23,16 +23,7 @@ if __name__ == '__main__':
              ],
         requires=['NumPy (>=1.3)',],
         long_description=open('README.rst').read(),
-        package_data = {
-                # If any package contains *.txt or *.rst files, include them:
-                '': ['*.txt', '*.rst'],
-                'sequence': ['tests/test-data/*'],
-            },
-        packages=[
-                    'seqtools',
-                    'seqtools.align',
-                    'seqtools.fs',
-                    'seqtools.sequence',
-                    'seqtools.sequence.tests'
-                ],
+        packages = find_packages('seqtools'),
+        package_dir = {'':'seqtools'},
+        include_package_data = True,
         )
