@@ -11,7 +11,7 @@ Copyright (c) 2010 Brant C. Faircloth. All rights reserved.
 import os
 import numpy
 import unittest
-from demuxipy.lib import sequence
+from seqtools.sequence import sequence
 
 import pdb
 

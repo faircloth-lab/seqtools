@@ -12,7 +12,7 @@ import os
 import math
 import unittest
 import multiprocessing
-from demuxipy.lib import fops
+from seqtools.sequence import fops
 
 import pdb
 

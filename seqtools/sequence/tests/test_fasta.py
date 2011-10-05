@@ -11,7 +11,7 @@ Copyright (c) 2010 Brant C. Faircloth. All rights reserved.
 import os
 import numpy
 import unittest
-from tools.sequence import fasta
+from seqtools.sequence import fasta
 
 import pdb
 

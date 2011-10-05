@@ -49,7 +49,7 @@ import math
 import numpy
 import cPickle
 import unittest
-from demuxipy.lib import fastq
+from seqtools.sequence import fastq
 
 import pdb
 

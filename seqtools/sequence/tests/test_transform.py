@@ -13,7 +13,7 @@ import numpy
 import math
 import unittest
 import exceptions
-from demuxipy.lib import transform
+from seqtools.sequence import transform
 
 import pdb
 
