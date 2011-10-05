@@ -33,8 +33,8 @@ Installation
 Tests
 -----
 
-While several of the functions and classes within are not fully tested,
-*ALL* of the sequence-handling classes, methods, and functions are
+While several of the functions and classes within are not (yet) fully tested,
+**ALL** of the *sequence-handling* classes, methods, and functions are
 covered by unittests.  To run these tests after installation, do:
 
 >>> from seqtools import sequence
