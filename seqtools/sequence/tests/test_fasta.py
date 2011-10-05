@@ -10,7 +10,9 @@ Copyright (c) 2010 Brant C. Faircloth. All rights reserved.
 
 import os
 import numpy
+import shutil
 import unittest
+import tempfile
 from seqtools.sequence import fasta
 
 #import pdb
@@ -85,29 +87,32 @@ class TestFastaWriter(unittest.TestCase):
     
     def test_fasta_write(self):
         """[fasta] fasta writing"""
-        outf = fasta.FastaWriter('test-output/test_write.fasta')
+        d = tempfile.mkdtemp()
+        outf = fasta.FastaWriter(os.path.join(d,'test_write.fasta'))
         for s in self.seq:
             outf.write(s)
         outf.close()
         old = self._read_raw_contents('test-data/sequence.fasta')
-        new = self._read_raw_contents('test-output/test_write.fasta')
+        new = self._read_raw_contents(os.path.join(d,'test_write.fasta'))
         assert old == new
-        os.remove('test-output/test_write.fasta')
+        shutil.rmtree(d)
     
     def test_fasta_qual_write(self):
         """[fasta] fasta+qual writing"""
-        outf = fasta.FastaWriter('test-output/test_write.fasta', 'test-output/test_write.qual')
+        d = tempfile.mkdtemp()
+        f = os.path.join(d, 'test_write.fasta')
+        q = os.path.join(d, 'test_write.qual')
+        outf = fasta.FastaWriter(f,q)
         for s in self.seq:
             outf.write(s)
         outf.close()
         old_s = self._read_raw_contents('test-data/sequence.fasta')
         old_q = self._read_raw_contents('test-data/sequence.qual')
-        new_s = self._read_raw_contents('test-output/test_write.fasta')
-        new_q = self._read_raw_contents('test-output/test_write.qual')
+        new_s = self._read_raw_contents(f)
+        new_q = self._read_raw_contents(q)
         assert old_s == new_s
         assert old_q == new_q
-        for i in ['test-output/test_write.fasta', 'test-output/test_write.qual']:
-            os.remove(i)
+        shutil.rmtree(d)
 
 fasta_sequence = \
     ((">NoMID rank=0000030 x=1238.5 y=1737.0 length=47","AGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAGAG", 

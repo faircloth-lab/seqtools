@@ -19,7 +19,7 @@ from seqtools.sequence import fops
 class TestFopsFunctions(unittest.TestCase):
     def test_chunking_by_pieces(self):
         """[fops] chunk by pieces"""
-        input = 'test-data/galGal3.read1.fa'
+        input = 'test-data/test.read1.fa'
         f_type, delim = fops.file_type(input)
         chunks = fops.get_chunks(input, delim, split_type='pieces')
         tf = fops.make_chunks(chunks, mp=False)
@@ -28,20 +28,20 @@ class TestFopsFunctions(unittest.TestCase):
     
     def test_chunking_by_size(self):
         """[fops] chunk by size"""
-        input = 'test-data/galGal3.read1.fa'
+        input = 'test-data/test.read1.fa'
         f_type, delim = fops.file_type(input)
-        chunks = fops.get_chunks(input, delim, mb = 2, split_type='size')
+        chunks = fops.get_chunks(input, delim, mb = 0.1, split_type='size')
         tf = fops.make_chunks(chunks, mp=False)
         # make sure chunks are ~ mb in size.  problem is that the last one will almost alway be off
         # so just round up and check if w/in 1 mb.
         for f in tf:
             sz = os.path.getsize(f)/1024.**2
-            self.failUnlessAlmostEqual(math.ceil(sz), 2, delta=1)
+            self.failUnlessAlmostEqual(math.ceil(sz), 0.1, delta=1)
         self.clean(tf)
     
     def test_chunking_by_multiprocessing(self):
         """[fops] chunk by multiprocessing"""
-        input = 'test-data/galGal3.read1.fa'
+        input = 'test-data/test.read1.fa'
         f_type, delim = fops.file_type(input)
         chunks = fops.get_chunks(input, delim, split_type='pieces')
         tf = fops.make_chunks(chunks, mp=True)
@@ -62,19 +62,19 @@ class TestFopsFunctions(unittest.TestCase):
     
     def test_fasta_file_type(self):
         """[fops] fasta file type and delimiter check"""
-        input = 'test-data/galGal3.read1.fa'
+        input = 'test-data/test.read1.fa'
         ft, delim = fops.file_type(input)
         assert [ft, delim] == ['fasta','>']
     
     def test_fastq_file_type(self):
         """[fops] fastq file type and delimiter check"""
-        input = 'test-data/galGal3.read1.fq'
+        input = 'test-data/test.read1.fq'
         ft, delim = fops.file_type(input)
         assert [ft, delim] == ['fastq','@']
     
     def test_fasta_chunking(self):
         """[fops] sum(chunked fasta file) = unchunked fasta file"""
-        input = 'test-data/galGal3.read1.fa'
+        input = 'test-data/test.read1.fa'
         unchunk_headers = self.get_fasta_headers(input)
         tf = self.get_chunks(input)
         chunk_headers = set([])
@@ -85,7 +85,7 @@ class TestFopsFunctions(unittest.TestCase):
     
     def test_fastq_chunking(self):
         """[fops] sum(chunked fastq file) = unchunked fastq file"""
-        input = 'test-data/galGal3.read1.fq'
+        input = 'test-data/test.read1.fq'
         unchunk_headers = self.get_fasta_headers(input)
         tf = self.get_chunks(input)
         chunk_headers = set([])

@@ -47,8 +47,10 @@ SOFTWARE.
 import os
 import math
 import numpy
+import shutil
 import cPickle
 import unittest
+import tempfile
 from seqtools.sequence import fastq
 
 #import pdb
@@ -432,36 +434,44 @@ class TestFastqWriter(unittest.TestCase):
     
     def test_fastq_write_sanger_format(self):
         """[fastq] fastq writing (sanger format)"""
-        outf = fastq.FastqWriter('test-output/test_write.fastq')
+        d = tempfile.mkdtemp()
+        outf = fastq.FastqWriter(os.path.join(d, 'test_write.fastq'))
         for s in self.seq:
             outf.write(s)
         outf.close()
         old = self._read_raw_contents('test-data/sequence.fastq')
-        new = self._read_raw_contents('test-output/test_write.fastq')
+        new = self._read_raw_contents(os.path.join(d, 'test_write.fastq'))
         assert old == new
+        shutil.rmtree(d)
     
     def test_fastq_write_solexa_format(self):
         """[fastq] fastq writing (solexa format)"""
-        outf = fastq.FastqWriter('test-output/test_write.fastq', format='solexa')
+        d = tempfile.mkdtemp()
+        fq = os.path.join(d, 'test_write.fastq')
+        outf = fastq.FastqWriter(fq, format='solexa')
         for s in self.seq:
             outf.write(s)
         outf.close()
         old = self._read_raw_contents('test-data/sequence.solexa.fastq')
-        new = self._read_raw_contents('test-output/test_write.fastq')
+        new = self._read_raw_contents(fq)
         assert old == new
+        shutil.rmtree(d)
     
     def test_fastq_write_illumina_format(self):
         """[fastq] fastq writing (illumina format)"""
-        outf = fastq.FastqWriter('test-output/test_write.fastq', format='illumina')
+        d = tempfile.mkdtemp()
+        fq = os.path.join(d, 'test_write.fastq')
+        outf = fastq.FastqWriter(fq, format='illumina')
         for s in self.seq:
             outf.write(s)
         outf.close()
         old = self._read_raw_contents('test-data/sequence.illumina.fastq')
-        new = self._read_raw_contents('test-output/test_write.fastq')
+        new = self._read_raw_contents(fq)
         assert old == new
+        shutil.rmtree(d)
 
     def tearDown(self):
-        os.remove('test-output/test_write.fastq')
+        pass
 
 class TestFastqTrimmingMaskingAndSlicingMethods(unittest.TestCase):
     """test snapshotting, trimming, masking, masking and trimmming, and slicing"""
