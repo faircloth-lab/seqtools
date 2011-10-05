@@ -16,8 +16,8 @@ these packages.
 Installation
 ------------
 
-**seqtools** requires numpy_ (> 1.3).  After installing numpy, to install
-**seqtools**:
+seqtools_ requires numpy_ (> 1.3).  After installing numpy, to install
+seqtools_:
 
 - from source::
 
@@ -36,17 +36,17 @@ Installation
 Tests
 -----
 
-While several of the functions and classes within **seqtools** are not (yet) 
+While several of the functions and classes within seqtools_ are not (yet) 
 fully tested, **ALL** of the *sequence-handling* classes, methods, and functions are
 covered by unittests.
 
 Running the tests as below, requires python-nose_.  After installing python-nose_, numpy_, 
-and **seqtools** run the tests using:
+and seqtools_ run the tests using:
 
 >>> from seqtools import sequence
 >>> sequence.test()
 
-Alternatively, after installing numpy_ and **seqtools** you can run the tests using:::
+Alternatively, after installing numpy_ and seqtools_ you can run the tests using:::
 
     python seqtools/sequence/tests/run.py
 
@@ -55,3 +55,5 @@ Alternatively, after installing numpy_ and **seqtools** you can run the tests us
 .. _galaxy-tools: http://bitbucket.org/galaxy/galaxy-dist/src/
 .. _numpy: http://numpy.scipy.org/
 .. _lastz: http://www.bx.psu.edu/~rsharris/lastz/
+.. _python-nose: http://code.google.com/p/python-nose/
+.. _seqtools: https://github.com/faircloth-lab/seqtools/
