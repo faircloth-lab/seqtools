@@ -1,3 +1,3 @@
-import concatenate
+import blat
 import lastz
 import psl
