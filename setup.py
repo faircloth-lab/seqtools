@@ -21,10 +21,23 @@ if __name__ == '__main__':
             'Programming Language :: Python',
             'Topic :: Scientific/Engineering :: Bio-Informatics',
              ],
-        requires=['numpy(>=1.3)'],
         long_description=open('README.rst').read(),
-        packages = find_packages('seqtools'),
-        package_dir = {'':'seqtools'},
+        install_requires=[
+            'numpy >= 1.3'
+            ],
+        packages = [
+            'seqtools',
+            'seqtools.align',
+            'seqtools.fs',
+            'seqtools.sequence',
+            'seqtools.sequence.tests'
+            ],
+        package_data = {
+            '':['*.txt'],
+            'seqtools': [
+                'sequence/tests/test-data/*'
+                ],
+            },
         include_package_data = True,
         test_suite = "sequence",
-        )
+    )
