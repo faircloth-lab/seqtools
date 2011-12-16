@@ -1,0 +1,634 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "DTD/xhtml1-strict.dtd">
+<html>
+  <head>
+    <title>sequence.sequence.SequencingRead : API documentation</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+    <link href="apidocs.css" type="text/css" rel="stylesheet" />
+    
+    
+  </head>
+  <body>
+    <h1 class="class">s.s.SequencingRead : class documentation</h1>
+    <p>
+      <span id="part">Part of <a href="sequence.html">sequence</a>.<a href="sequence.sequence.html">sequence</a></span>
+      
+      <a href="classIndex.html#sequence.sequence.SequencingRead">View In Hierarchy</a>
+    </p>
+    <div>
+      <p>Known subclasses: <a href="sequence.fastq.FastqSequencingRead.html">sequence.fastq.FastqSequencingRead</a></p>
+    </div>
+    <div>A generic class encapuslating DNA sequence related methods and 
+attributes<table class="fieldTable"></table></div>
+
+    
+    
+    <div id="splitTables">
+      <table class="children sortable" id="id21">
+  
+  
+<tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#__init__">__init__</a></td>
+    <td><span>initialize the SequencingRead class</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#__len__">__len__</a></td>
+    <td><span>return length of self.sequence</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#__str__">__str__</a></td>
+    <td><span>return representation of the object</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#set_quality">set_quality</a></td>
+    <td><span>set self.quality attribute</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#get_quality_string">get_quality_string</a></td>
+    <td><span>return self.quality array as decimal string</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#append_sequence">append_sequence</a></td>
+    <td><span>append sequence to self.sequence attribute</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#append_quality">append_quality</a></td>
+    <td><span>append quality to self.quality attribute</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#is_DNA">is_DNA</a></td>
+    <td><span>return BOOL indicating if sequence is not RNA</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#is_RNA">is_RNA</a></td>
+    <td><span>return BOOL indicating if sequence is not DNA</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#is_valid_sequence">is_valid_sequence</a></td>
+    <td><span>return BOOL indicating that sequence contains legitimate base pairs</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#clone">clone</a></td>
+    <td><span>return a copy.deepcopy (clone) of this object</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#snapshot">snapshot</a></td>
+    <td><span>archive untouched copies of self.sequence and self.quality</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#reverse">reverse</a></td>
+    <td><span>return a new object with a reverses self.sequence strand</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#complement">complement</a></td>
+    <td><span>return a new object with a complemented self.sequence strand</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#reverse_complement">reverse_complement</a></td>
+    <td><span>return a new object with a reverse-complemented self.sequence strand</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#sequence_as_DNA">sequence_as_DNA</a></td>
+    <td><span>return a new object with an RNA self.sequence strand as DNA</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#sequence_as_RNA">sequence_as_RNA</a></td>
+    <td><span>return a new object with a DNA self.sequence strand as RNA</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#mask_and_trim">mask_and_trim</a></td>
+    <td><span>return a new object with DNA masked and trimmed according to some 
+min_qual</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#mask">mask</a></td>
+    <td><span>return a new object with DNA masked according to some min_qual</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#trim">trim</a></td>
+    <td><span>return a new object with DNA trimmed according to some min_qual</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#slice">slice</a></td>
+    <td><span>return a new object with DNA sliced from left_column_offset to 
+right_column_offset</span></td>
+  </tr><tr class="method private">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#_get_qual_array_from_decimal">_get_qual_array_from_decimal</a></td>
+    <td><span>PRIVATE: parse quality values 10 20 20 30 to array</span></td>
+  </tr><tr class="method private">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#_check">_check</a></td>
+    <td><span>PRIVATE:  determine which quality scores fall below self.min_qual</span></td>
+  </tr><tr class="method private">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#_qual_check">_qual_check</a></td>
+    <td><span>PRIVATE:  return BOOL indicating whether we have quality values</span></td>
+  </tr>
+  
+</table>
+      
+      
+    </div>
+    
+    
+    
+
+    <div class="function">
+  <a name="sequence.sequence.SequencingRead.__init__">
+    
+  </a>
+  <a name="__init__">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    __init__(self):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>initialize the SequencingRead class<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.sequence.SequencingRead.__len__">
+    
+  </a>
+  <a name="__len__">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    __len__(self):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>return length of self.sequence<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.sequence.SequencingRead.__str__">
+    
+  </a>
+  <a name="__str__">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    __str__(self):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>return representation of the object<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.sequence.SequencingRead.set_quality">
+    
+  </a>
+  <a name="set_quality">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    set_quality(self, quality_string):
+    
+  </div>
+  <div class="functionBody">
+    <div class="interfaceinfo">overridden in <a href="sequence.fastq.FastqSequencingRead.html">sequence.fastq.FastqSequencingRead</a></div>
+    <div>set self.quality attribute</p>
+<p>parse ASCII and QUAL quality_string into an unsigned integer array that 
+becomes the quality attribute<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.sequence.SequencingRead.get_quality_string">
+    
+  </a>
+  <a name="get_quality_string">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    get_quality_string(self):
+    
+  </div>
+  <div class="functionBody">
+    <div class="interfaceinfo">overridden in <a href="sequence.fastq.FastqSequencingRead.html">sequence.fastq.FastqSequencingRead</a></div>
+    <div>return self.quality array as decimal string<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.sequence.SequencingRead._get_qual_array_from_decimal">
+    
+  </a>
+  <a name="_get_qual_array_from_decimal">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    _get_qual_array_from_decimal(self, quality_string):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>PRIVATE: parse quality values 10 20 20 30 to array<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.sequence.SequencingRead.append_sequence">
+    
+  </a>
+  <a name="append_sequence">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    append_sequence(self, sequence):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>append sequence to self.sequence attribute<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.sequence.SequencingRead.append_quality">
+    
+  </a>
+  <a name="append_quality">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    append_quality(self, quality_string):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>append quality to self.quality attribute<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.sequence.SequencingRead.is_DNA">
+    
+  </a>
+  <a name="is_DNA">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    is_DNA(self):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>return BOOL indicating if sequence is not RNA<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.sequence.SequencingRead.is_RNA">
+    
+  </a>
+  <a name="is_RNA">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    is_RNA(self):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>return BOOL indicating if sequence is not DNA<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.sequence.SequencingRead.is_valid_sequence">
+    
+  </a>
+  <a name="is_valid_sequence">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    is_valid_sequence(self):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>return BOOL indicating that sequence contains legitimate base pairs<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.sequence.SequencingRead.clone">
+    
+  </a>
+  <a name="clone">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    clone(self):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>return a copy.deepcopy (clone) of this object</p>
+<p>we use this when we are going to make any potentially destructive 
+changes to an object (e.g. trimming, masking, slicing).  The default case 
+is to *always* return a clone of the object rather than modifying the 
+attributes of the object in-place.  This is different than self.snapshot(),
+in that snapshot just archives the initial state of sequence and quality 
+attributes before manipulation.<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.sequence.SequencingRead.snapshot">
+    
+  </a>
+  <a name="snapshot">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    snapshot(self):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>archive untouched copies of self.sequence and self.quality</p>
+<p>archive untouched copies of self.sequence and self.quality as 
+self.sequence_snapshot and self.quality_snapshot. typically called before 
+we run some 'destructive' manipulation on the object in question (e.g. 
+trimming).  Different from self.clone() in that clone returns a copy of the
+entire object.<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.sequence.SequencingRead.reverse">
+    
+  </a>
+  <a name="reverse">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    reverse(self, clone=True):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>return a new object with a reverses self.sequence strand</p>
+<p>call using my_object.reverse(clone=False) if you wish to reverse and 
+return the current object.<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.sequence.SequencingRead.complement">
+    
+  </a>
+  <a name="complement">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    complement(self, clone=True):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>return a new object with a complemented self.sequence strand</p>
+<p>call using my_object.complement(clone=False) if you wish to complement 
+and return the current object.<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.sequence.SequencingRead.reverse_complement">
+    
+  </a>
+  <a name="reverse_complement">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    reverse_complement(self, clone=True):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>return a new object with a reverse-complemented self.sequence strand</p>
+<p>call using my_object.reverse_complement(clone=False) if you wish to 
+complement and return the current object.<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.sequence.SequencingRead.sequence_as_DNA">
+    
+  </a>
+  <a name="sequence_as_DNA">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    sequence_as_DNA(self, clone=True):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>return a new object with an RNA self.sequence strand as DNA</p>
+<p>call using my_object.sequence_as_DNA(clone=False) if you wish to convert
+and return the current object.<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.sequence.SequencingRead.sequence_as_RNA">
+    
+  </a>
+  <a name="sequence_as_RNA">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    sequence_as_RNA(self, clone=True):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>return a new object with a DNA self.sequence strand as RNA</p>
+<p>call using my_object.sequence_as_RNA(clone=False) if you wish to convert
+and return the current object.<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.sequence.SequencingRead._check">
+    
+  </a>
+  <a name="_check">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    _check(self):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>PRIVATE:  determine which quality scores fall below self.min_qual<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.sequence.SequencingRead._qual_check">
+    
+  </a>
+  <a name="_qual_check">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    _qual_check(self):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>PRIVATE:  return BOOL indicating whether we have quality values<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.sequence.SequencingRead.mask_and_trim">
+    
+  </a>
+  <a name="mask_and_trim">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    mask_and_trim(self, min_qual, clone=True):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>return a new object with DNA masked and trimmed according to some 
+min_qual</p>
+<p>call using my_object.mask_and_trim(clone=False) if you wish to mask, 
+trim, and return the current object.<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.sequence.SequencingRead.mask">
+    
+  </a>
+  <a name="mask">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    mask(self, min_qual, ambiguous='N', clone=True):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>return a new object with DNA masked according to some min_qual</p>
+<p>call using my_object.mask(clone=False) if you wish to mask, trim, and 
+return the current object.  You may also specify the masking character for 
+bases &lt; min_qual using my_object.mask(ambiguous = '?')<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.sequence.SequencingRead.trim">
+    
+  </a>
+  <a name="trim">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    trim(self, min_qual, clone=True):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>return a new object with DNA trimmed according to some min_qual</p>
+<p>call using my_object.trim(clone=False) if you wish to mask, trim, and 
+return the current object.<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.sequence.SequencingRead.slice">
+    
+  </a>
+  <a name="slice">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    slice(self, left_column_offset, right_column_offset, clone=True):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>return a new object with DNA sliced from left_column_offset to 
+right_column_offset</p>
+<p>call using my_object.slice(10, 20, clone=False) if you wish to mask, 
+trim, and return the current object.<table class="fieldTable"></table></div>
+  </div>
+</div>
+    <address>
+      <a href="index.html">API Documentation</a> for sequence, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at 2011-03-25 12:10:35.
+    </address>
+  </body>
+</html>

@@ -1,0 +1,481 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "DTD/xhtml1-strict.dtd">
+<html>
+  <head>
+    <title>sequence.fastq.FastqSequencingRead : API documentation</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+    <link href="apidocs.css" type="text/css" rel="stylesheet" />
+    
+    
+  </head>
+  <body>
+    <h1 class="class">s.f.FastqSequencingRead(<a href="sequence.sequence.SequencingRead.html">SequencingRead</a>) : class documentation</h1>
+    <p>
+      <span id="part">Part of <a href="sequence.html">sequence</a>.<a href="sequence.fastq.html">fastq</a></span>
+      
+      <a href="classIndex.html#sequence.fastq.FastqSequencingRead">View In Hierarchy</a>
+    </p>
+    <div>
+      <p>Known subclasses: <a href="sequence.fastq.FastqIlluminaRead.html">sequence.fastq.FastqIlluminaRead</a>, <a href="sequence.fastq.FastqSangerRead.html">sequence.fastq.FastqSangerRead</a>, <a href="sequence.fastq.FastqSolexaRead.html">sequence.fastq.FastqSolexaRead</a></p>
+    </div>
+    <div>Represents fastq sequences, attributes, and methods.  Default `type` is 
+using Sanger-bases qualities<table class="fieldTable"></table></div>
+
+    
+    
+    <div id="splitTables">
+      <table class="children sortable" id="id8">
+  
+  
+<tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="sequence.fastq.FastqSequencingRead.html#get_class_by_format">get_class_by_format</a></td>
+    <td><span>return the class of a fastq read and its associated attributes</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="sequence.fastq.FastqSequencingRead.html#convert_score_phred_to_solexa">convert_score_phred_to_solexa</a></td>
+    <td><span>return an array of quality scores converted from the phred to solexa 
+scoring system</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="sequence.fastq.FastqSequencingRead.html#convert_score_solexa_to_phred">convert_score_solexa_to_phred</a></td>
+    <td><span>return an array of quality scores converted from the solexa to phred 
+scoring system</span></td>
+  </tr><tr class="classmethod">
+    
+    
+    <td>Class Method</td>
+    <td><a href="sequence.fastq.FastqSequencingRead.html#restrict_scores_to_valid_range">restrict_scores_to_valid_range</a></td>
+    <td><span>return an array of scored limited to the range of the (format) class 
+maximum</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.fastq.FastqSequencingRead.html#set_quality">set_quality</a></td>
+    <td><span>return ASCII and QUAL strings parsed as numpy.array([], dtype=uint8)</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.fastq.FastqSequencingRead.html#get_quality_string">get_quality_string</a></td>
+    <td><span>return the quality string of a given array in either decimal or ascii 
+format</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.fastq.FastqSequencingRead.html#convert_read_to_format">convert_read_to_format</a></td>
+    <td><span>return an object converted from current format to requested format</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.fastq.FastqSequencingRead.html#get_sequence">get_sequence</a></td>
+    <td><span>return the string sequence of a read</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.fastq.FastqSequencingRead.html#is_valid_format">is_valid_format</a></td>
+    <td><span>return BOOL indicating that ascii character values are within min-max 
+for class/format</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.fastq.FastqSequencingRead.html#is_valid_quality_length">is_valid_quality_length</a></td>
+    <td><span>return BOOL indicating that sequence contains legitimate base pairs</span></td>
+  </tr><tr class="method">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.fastq.FastqSequencingRead.html#assert_sequence_quality_lengths">assert_sequence_quality_lengths</a></td>
+    <td><span>ensure sequence length = quality length</span></td>
+  </tr><tr class="method private">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.fastq.FastqSequencingRead.html#_get_qual_array_from_ascii">_get_qual_array_from_ascii</a></td>
+    <td><span>PRIVATE: help parse an ASCII quality string and return an unsigned 
+integer array of quality values</span></td>
+  </tr>
+  
+</table>
+      
+        <p>
+          Inherited from <a href="sequence.sequence.SequencingRead.html">SequencingRead</a>:
+        </p>
+        <table class="children sortable" id="id9">
+  
+  
+<tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#__init__">__init__</a></td>
+    <td><span>initialize the SequencingRead class</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#__len__">__len__</a></td>
+    <td><span>return length of self.sequence</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#__str__">__str__</a></td>
+    <td><span>return representation of the object</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#append_sequence">append_sequence</a></td>
+    <td><span>append sequence to self.sequence attribute</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#append_quality">append_quality</a></td>
+    <td><span>append quality to self.quality attribute</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#is_DNA">is_DNA</a></td>
+    <td><span>return BOOL indicating if sequence is not RNA</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#is_RNA">is_RNA</a></td>
+    <td><span>return BOOL indicating if sequence is not DNA</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#is_valid_sequence">is_valid_sequence</a></td>
+    <td><span>return BOOL indicating that sequence contains legitimate base pairs</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#clone">clone</a></td>
+    <td><span>return a copy.deepcopy (clone) of this object</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#snapshot">snapshot</a></td>
+    <td><span>archive untouched copies of self.sequence and self.quality</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#reverse">reverse</a></td>
+    <td><span>return a new object with a reverses self.sequence strand</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#complement">complement</a></td>
+    <td><span>return a new object with a complemented self.sequence strand</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#reverse_complement">reverse_complement</a></td>
+    <td><span>return a new object with a reverse-complemented self.sequence strand</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#sequence_as_DNA">sequence_as_DNA</a></td>
+    <td><span>return a new object with an RNA self.sequence strand as DNA</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#sequence_as_RNA">sequence_as_RNA</a></td>
+    <td><span>return a new object with a DNA self.sequence strand as RNA</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#mask_and_trim">mask_and_trim</a></td>
+    <td><span>return a new object with DNA masked and trimmed according to some 
+min_qual</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#mask">mask</a></td>
+    <td><span>return a new object with DNA masked according to some min_qual</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#trim">trim</a></td>
+    <td><span>return a new object with DNA trimmed according to some min_qual</span></td>
+  </tr><tr class="basemethod">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#slice">slice</a></td>
+    <td><span>return a new object with DNA sliced from left_column_offset to 
+right_column_offset</span></td>
+  </tr><tr class="basemethod private">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#_get_qual_array_from_decimal">_get_qual_array_from_decimal</a></td>
+    <td><span>PRIVATE: parse quality values 10 20 20 30 to array</span></td>
+  </tr><tr class="basemethod private">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#_check">_check</a></td>
+    <td><span>PRIVATE:  determine which quality scores fall below self.min_qual</span></td>
+  </tr><tr class="basemethod private">
+    
+    
+    <td>Method</td>
+    <td><a href="sequence.sequence.SequencingRead.html#_qual_check">_qual_check</a></td>
+    <td><span>PRIVATE:  return BOOL indicating whether we have quality values</span></td>
+  </tr>
+  
+</table>
+      
+      
+    </div>
+    
+    
+    
+
+    <div class="function">
+  <a name="sequence.fastq.FastqSequencingRead.get_class_by_format">
+    
+  </a>
+  <a name="get_class_by_format">
+    
+  </a>
+  <div class="functionHeader">
+    @classmethod<br />
+    def
+    get_class_by_format(cls, format):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>return the class of a fastq read and its associated attributes<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.fastq.FastqSequencingRead.convert_score_phred_to_solexa">
+    
+  </a>
+  <a name="convert_score_phred_to_solexa">
+    
+  </a>
+  <div class="functionHeader">
+    @classmethod<br />
+    def
+    convert_score_phred_to_solexa(cls, quality_array):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>return an array of quality scores converted from the phred to solexa 
+scoring system<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.fastq.FastqSequencingRead.convert_score_solexa_to_phred">
+    
+  </a>
+  <a name="convert_score_solexa_to_phred">
+    
+  </a>
+  <div class="functionHeader">
+    @classmethod<br />
+    def
+    convert_score_solexa_to_phred(cls, quality_array):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>return an array of quality scores converted from the solexa to phred 
+scoring system<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.fastq.FastqSequencingRead.restrict_scores_to_valid_range">
+    
+  </a>
+  <a name="restrict_scores_to_valid_range">
+    
+  </a>
+  <div class="functionHeader">
+    @classmethod<br />
+    def
+    restrict_scores_to_valid_range(cls, quality_array):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>return an array of scored limited to the range of the (format) class 
+maximum<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.fastq.FastqSequencingRead.set_quality">
+    
+  </a>
+  <a name="set_quality">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    set_quality(self, quality_string):
+    
+  </div>
+  <div class="functionBody">
+    <div class="interfaceinfo">overrides <a href="sequence.sequence.SequencingRead.html#set_quality">sequence.sequence.SequencingRead.set_quality</a></div>
+    <div>return ASCII and QUAL strings parsed as numpy.array([], dtype=uint8)<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.fastq.FastqSequencingRead._get_qual_array_from_ascii">
+    
+  </a>
+  <a name="_get_qual_array_from_ascii">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    _get_qual_array_from_ascii(self, quality_array):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>PRIVATE: help parse an ASCII quality string and return an unsigned 
+integer array of quality values<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.fastq.FastqSequencingRead.get_quality_string">
+    
+  </a>
+  <a name="get_quality_string">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    get_quality_string(self, qtype='decimal'):
+    
+  </div>
+  <div class="functionBody">
+    <div class="interfaceinfo">overrides <a href="sequence.sequence.SequencingRead.html#get_quality_string">sequence.sequence.SequencingRead.get_quality_string</a></div>
+    <div>return the quality string of a given array in either decimal or ascii 
+format<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.fastq.FastqSequencingRead.convert_read_to_format">
+    
+  </a>
+  <a name="convert_read_to_format">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    convert_read_to_format(self, format):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>return an object converted from current format to requested format</p>
+<p>Convert an object from it's current format (self.format) to the 
+requested format, which must be of the following type and scoring system: 
+fasta, solexa, illumina.<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.fastq.FastqSequencingRead.get_sequence">
+    
+  </a>
+  <a name="get_sequence">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    get_sequence(self):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>return the string sequence of a read<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.fastq.FastqSequencingRead.is_valid_format">
+    
+  </a>
+  <a name="is_valid_format">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    is_valid_format(self, quality_string):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>return BOOL indicating that ascii character values are within min-max 
+for class/format<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.fastq.FastqSequencingRead.is_valid_quality_length">
+    
+  </a>
+  <a name="is_valid_quality_length">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    is_valid_quality_length(self):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>return BOOL indicating that sequence contains legitimate base pairs<table class="fieldTable"></table></div>
+  </div>
+</div><div class="function">
+  <a name="sequence.fastq.FastqSequencingRead.assert_sequence_quality_lengths">
+    
+  </a>
+  <a name="assert_sequence_quality_lengths">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    assert_sequence_quality_lengths(self):
+    
+  </div>
+  <div class="functionBody">
+    
+    <div>ensure sequence length = quality length<table class="fieldTable"></table></div>
+  </div>
+</div>
+    <address>
+      <a href="index.html">API Documentation</a> for sequence, generated by <a href="http://codespeak.net/~mwh/pydoctor/">pydoctor</a> at 2011-03-25 12:10:35.
+    </address>
+  </body>
+</html>

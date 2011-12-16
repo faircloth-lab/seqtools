@@ -11,7 +11,7 @@ if __name__ == '__main__':
         author="Brant Faircloth",
         author_email="brant.faircloth+seqtools@gmail.com ",
         url="http://github.com/faircloth-lab/seqtools/",
-        license="BSD",
+        license="",
         classifiers=[
             'Development Status :: 4 - Beta',
             'Environment :: Console',
@@ -21,17 +21,10 @@ if __name__ == '__main__':
             'Programming Language :: Python',
             'Topic :: Scientific/Engineering :: Bio-Informatics',
              ],
-        requires=['NumPy (>=1.3)',],
-        long_description=open('README.txt').read(),
-        package_data = {
-                # If any package contains *.txt or *.rst files, include them:
-                '': ['*.txt', '*.rst'],
-                'sequence': ['tests/test-data/*'],
-            },
-        packages=[
-                    'align',
-                    'fs',
-                    'sequence',
-                    'sequence.tests'
-                ],
+        requires=['numpy(>=1.3)'],
+        long_description=open('README.rst').read(),
+        packages = find_packages('seqtools'),
+        package_dir = {'':'seqtools'},
+        include_package_data = True,
+        test_suite = "sequence",
         )
