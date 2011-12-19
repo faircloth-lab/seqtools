@@ -1,7 +1,7 @@
 from math import log
 from collections import namedtuple
 
-#import pdb
+import pdb
 
 class PslReader():
     """Represents an iterator over psl files from blat"""
@@ -31,7 +31,7 @@ class PslReader():
                 'block_count',
                 'block_sizes',
                 'qstarts',
-                't_starts'
+                't_starts',
             ])
 
     def close(self):
@@ -44,8 +44,7 @@ class PslReader():
             raise StopIteration
         # strip and split
         line = line.strip().split('\t')
-        to_int = [0,1,2,3,4,5,6,7,10,11,12,14,15,16,17]
-        line = [int(val) if k in to_int else val for k,val in enumerate(line)]
+        line = [int(val) if val.isdigit() else val for k,val in enumerate(line)]
         return self.psl_template._make(line)
 
     def __iter__(self):
@@ -65,8 +64,8 @@ def percent_id(psl, protein=False, mRNA=True):
         sizeMul = 3
     else:
         sizeMul = 1
-    qAliSize = sizeMul * (psl['q_end'] - psl['q_start'])
-    tAliSize = psl['t_end'] - psl['t_start']
+    qAliSize = sizeMul * (psl.q_end - psl.q_start)
+    tAliSize = psl.t_end - psl.t_start
     aliSize = min(qAliSize, tAliSize)
     if aliSize <= 0:return 0
     else:
@@ -76,12 +75,12 @@ def percent_id(psl, protein=False, mRNA=True):
                 sizeDif = 0;
             else:
                 sizeDif = -sizeDif
-        insertFactor = psl['q_gap_count']
+        insertFactor = psl.q_gap_count
         if not mRNA:
-            insertFactor += psl['t_gap_count']
-        total = (sizeMul * (psl['match'] + psl['repmatch'] + psl['mismatch']))
+            insertFactor += psl.t_gap_count
+        total = (sizeMul * (psl.match + psl.repmatch + psl.mismatch))
         if total != 0:
-            milliBad = (1000 * (psl['mismatch']*sizeMul + insertFactor + round(3*log(1+sizeDif)))) / total
+            milliBad = (1000 * (psl.mismatch * sizeMul + insertFactor + round(3*log(1+sizeDif)))) / total
         percent = round(100 - milliBad * 0.1,0)
         return percent
 
@@ -90,5 +89,5 @@ def score(psl, sizeMul = 1):
     convert the score of an alignment from a single line of a parsed PSL file.
     Code adapted from http://genome.ucsc.edu/FAQ/FAQblat#blat4
     '''
-    score = sizeMul * (psl['match'] + (psl['repmatch'] >> 1)) - sizeMul * psl['mismatch'] - psl['q_gap_count'] - psl['t_gap_count']
+    score = sizeMul * (psl.match + (psl.repmatch >> 1)) - sizeMul * psl.mismatch - psl.q_gap_count - psl.t_gap_count
     return score
