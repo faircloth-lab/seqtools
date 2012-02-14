@@ -462,3 +462,63 @@ class FastqWriter():
     def close( self ):
         """close output files"""
         return self.sequence_file.close()
+
+class FasterFastqReader(FastqReader):
+    """A faster fastq reader - when you don't need quality arrays.
+
+    Compared to the regular FastqWriter, this version is about 400 %
+    faster.  Exection times for FasterFastqReader versus the regular
+    FastqReader are below.  Sample sequence set was 100,000 lines.
+
+    5.71s user 0.10s system 99% cpu 5.812 total
+    22.96s user 0.10s system 99% cpu 23.075 total
+
+    """
+    def __init__(self, fastq_file, format = None):
+        FastqReader.__init__(self, fastq_file, format = format)
+
+    def next(self):
+        """read next fastq sequence"""
+        while True:
+            fastq_header = self.file.readline()
+            if not fastq_header:
+                raise StopIteration
+            fastq_header = fastq_header.rstrip('\n\r')
+            #remove empty lines, apparently extra new lines at end of file is common?
+            if fastq_header:
+                break
+        assert fastq_header.startswith('@'), 'Invalid fastq header: %s' % fastq_header
+        quality_string = ''
+        sequence = ''
+        while True:
+            line = self.file.readline()
+            if not line:
+                raise Exception('Invalid FASTQ file: could not parse second instance of sequence identifier.')
+            line = line.rstrip('\n\r')
+            if line.startswith('+') and (len(line) == 1 or line[1:].startswith(fastq_header[1:])):
+                description = line
+                break
+            sequence = ''.join([sequence, line])
+        while len(quality_string) < len(sequence):
+            line = self.file.readline()
+            if not line:
+                break
+            quality_string = ''.join([quality_string, line.strip()])
+        return (fastq_header, description, sequence, quality_string)
+
+class FasterFastqWriter():
+    """Write fastq objects to a file. NO conversion - just write
+    the fastq out.  Take input form FasterFastqReader.
+    """
+    def __init__(self, fastq_file, format = None):
+        FastqWriter.__init__(fastq_file, format = None)
+    
+    def write(self, fastq, qtype='ascii'):
+        """write fastaSequence objects to a file"""
+        identifier, sequence, quality = fastq
+        self.sequence_file.write("{0}\n{1}\n+{2}\n".format(
+                identifier,
+                sequence,
+                quality
+            )
+        )
