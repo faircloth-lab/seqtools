@@ -46,12 +46,14 @@ SOFTWARE.
 
 import math
 import copy
+import gzip
 import numpy
 import string
 import transform
+from os.path import splitext
 from sequence import SequencingRead
 
-#import pdb
+import pdb
 
 class FastqSequencingRead(SequencingRead):
     """Represents fastq sequences, attributes, and methods.  Default `type` is using Sanger-bases qualities"""
@@ -393,7 +395,11 @@ class FastqSummarizer():
 class FastqReader():
     """Represents an iterator over fastaq sequences from a file"""
     def __init__(self, fastq_file, format = 'sanger'):
-        self.file = open(fastq_file)
+        #pdb.set_trace()
+        if splitext(fastq_file)[1] == '.gz':
+            self.file = gzip.open(fastq_file, 'rb')
+        else:
+            self.file = open(fastq_file)
         self.format = format
         
     def close(self):
@@ -441,7 +447,10 @@ class FastqWriter():
     """Write fastq objects to a file"""
     def __init__(self, fastq_file, format = None):
         """set the sequence output file"""
-        self.sequence_file = open(fastq_file, 'w')
+        if splitext(fastq_file)[1] == '.gz':
+            self.sequence_file = gzip.open(fastq_file, 'wb')
+        else:
+            self.sequence_file = open(fastq_file, 'w')
         self.format = format
     
     def write(self, fastq, qtype='ascii'):
