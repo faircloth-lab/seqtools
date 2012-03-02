@@ -506,19 +506,21 @@ class FasterFastqReader(FastqReader):
             quality_string = ''.join([quality_string, line.strip()])
         return (fastq_header, description, sequence, quality_string)
 
-class FasterFastqWriter():
+class FasterFastqWriter(FastqWriter):
     """Write fastq objects to a file. NO conversion - just write
     the fastq out.  Take input form FasterFastqReader.
     """
     def __init__(self, fastq_file, format = None):
-        FastqWriter.__init__(fastq_file, format = None)
+        FastqWriter.__init__(self, fastq_file, format = None)
     
     def write(self, fastq, qtype='ascii'):
         """write fastaSequence objects to a file"""
-        identifier, sequence, quality = fastq
-        self.sequence_file.write("{0}\n{1}\n+{2}\n".format(
+        #pdb.set_trace()
+        identifier, description, sequence, quality = fastq
+        self.sequence_file.write("{0}\n{1}\n{2}\n{3}\n".format(
                 identifier,
                 sequence,
+                description,
                 quality
             )
         )
