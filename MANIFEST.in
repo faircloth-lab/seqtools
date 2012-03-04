@@ -1,1 +1,2 @@
+include *.txt *.py *.rst
 recursive-include seqtools/sequence/tests/test-data *.*
