@@ -1,2 +1,2 @@
 include *.txt *.py *.rst
-recursive-include seqtools/sequence/tests/test-data *.*
+recursive-include seqtools/tests/test-data *.*
