@@ -30,14 +30,14 @@ if __name__ == '__main__':
             'seqtools.align',
             'seqtools.fs',
             'seqtools.sequence',
-            'seqtools.sequence.tests'
+            'seqtools.tests'
             ],
         package_data = {
             '':['*.txt'],
             'seqtools': [
-                'sequence/tests/test-data/*'
+                'tests/test-data/*'
                 ],
             },
         include_package_data = True,
-        test_suite = "sequence",
+        test_suite = "seqtools.tests",
     )
