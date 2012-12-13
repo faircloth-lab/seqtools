@@ -238,11 +238,11 @@ class FastaWriter():
     >>> outf.close()
     
     """
-    def __init__(self, fasta_file, quality_file = False):
+    def __init__(self, fasta_file, quality_file = False, mode='w'):
         """set the sequence and quality output files"""
-        self.sequence_file = open(fasta_file, 'w')
+        self.sequence_file = open(fasta_file, mode)
         if quality_file:
-            self.qual_file = open(quality_file, 'w')
+            self.qual_file = open(quality_file, mode)
         else:
             self.qual_file = quality_file
             
