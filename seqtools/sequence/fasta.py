@@ -45,10 +45,12 @@ SOFTWARE.
 """
 
 import copy
+import gzip
 import numpy
 import sequence
+from os.path import splitext
 
-#import pdb
+import pdb
 
 class FastaSequence(sequence.SequencingRead):
     """Represents fasta and fasta + qual sequences, attributes, and methods
@@ -85,41 +87,55 @@ class FastaReader():
     """
     def __init__(self, fasta_file):
         """set the fasta file attribute"""
-        self.sequence_file = open(fasta_file)
-    
-    def close( self ):
+        if splitext(fasta_file)[1] == '.gz':
+            self.sequence_file = gzip.open(fasta_file, 'rb')
+        else:
+            self.sequence_file = open(fasta_file)
+
+    def close(self):
         """close file"""
         self.sequence_file.close()
-    
+
+    def _seq(self, f):
+        """PRIVATE: read sequence from input file"""
+        line = f.readline()
+        #pdb.set_trace()
+        container = []
+        #remove header comment lines
+        while line and line.startswith('#'):  # pragma: no cover
+            line = f.readline()
+        if not line:
+            raise StopIteration
+        assert line.startswith('>'), "FASTA headers must start with >"
+        identifier = line.strip()
+        offset = f.tell()
+        while True:
+            line = f.readline()
+            if not line or line.startswith('>'):
+                if line:
+                    f.seek(offset)
+                break
+            line = line.rstrip()
+            assert ' ' not in line, "FASTA sequence contains spaces"
+            container.append(line)
+            offset = f.tell()
+        sequence = ''.join(container)
+        return identifier, sequence
+
     def next(self):
         """read next fasta sequence"""
-        line = self.sequence_file.readline()
-        #remove header comment lines
-        while line and line.startswith( '#' ): # pragma: no cover
-            line = self.sequence_file.readline()
-        if not line:
-            raise StopIteration 
-        assert line.startswith( '>' ), "FASTA headers must start with `>`"
+        # read from sequence file until we hit a '>'
+        sid, sequence = self._seq(self.sequence_file)
         rval = FastaSequence()
-        rval.identifier = line.strip()
-        offset = self.sequence_file.tell()
-        while True:
-            line = self.sequence_file.readline()
-            if not line or line.startswith( '>' ):
-                if line:
-                    self.sequence_file.seek(offset)
-                return rval
-            line = line.rstrip()
-            if ' ' in rval.sequence or ' ' in line: # pragma: no cover
-                rval.sequence = "%s%s " % (rval.sequence, line)
-            else:
-                rval.sequence += line
-            offset = self.sequence_file.tell()
-    
-    def __iter__( self ):
+        rval.identifier = sid
+        rval.sequence = sequence
+        return rval
+
+    def __iter__(self):
         """iterator"""
         while True:
             yield self.next()
+
 
 class FastaQualityReader():
     """Represents an iterator over fasta+qual sequences from a file
@@ -140,8 +156,12 @@ class FastaQualityReader():
     """
     def __init__( self, fasta_file, quality_file):
         """set the fasta file and qual attribute"""
-        self.sequence_file = open(fasta_file)
-        self.quality_file = open(quality_file)
+        if splitext(fasta_file)[1] == '.gz' and splitext(quality_file) == '.gz':
+            self.sequence_file = gzip.open(fasta_file, 'rb')
+            self.quality_file = gzip.open(quality_file, 'rb')
+        else:
+            self.sequence_file = open(fasta_file)
+            self.quality_file = open(quality_file)
         
     def close( self ):
         """close files"""
@@ -218,11 +238,11 @@ class FastaWriter():
     >>> outf.close()
     
     """
-    def __init__(self, fasta_file, quality_file = False):
+    def __init__(self, fasta_file, quality_file = False, mode='w'):
         """set the sequence and quality output files"""
-        self.sequence_file = open(fasta_file, 'w')
+        self.sequence_file = open(fasta_file, mode)
         if quality_file:
-            self.qual_file = open(quality_file, 'w')
+            self.qual_file = open(quality_file, mode)
         else:
             self.qual_file = quality_file
             
