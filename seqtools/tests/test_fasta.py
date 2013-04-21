@@ -44,9 +44,13 @@ class TestSequenceSetQuality(unittest.TestCase):
 class TestFastaReader(unittest.TestCase):
     def setUp(self):
         # switch to this directory - so we can have access to data
-        os.chdir(os.path.dirname(os.path.abspath(__file__)))
-        seq = 'test-data/sequence.fasta'
-        self.fasta = fasta.FastaReader(seq)
+        try:
+            os.chdir(os.path.dirname(os.path.abspath( __file__ )))
+            seq = 'test-data/sequence.fasta'
+            self.fasta = fasta.FastaReader(seq)
+        except OSError:
+            seq = 'test-data/sequence.fasta'
+            self.fasta = fasta.FastaReader(seq)
     
     def runTest(self):
         """[fasta] reader"""
@@ -77,7 +81,7 @@ class TestFastaQualReader(unittest.TestCase):
 
 class TestFastaWriter(unittest.TestCase):
     def setUp(self):
-        os.chdir(os.path.dirname(os.path.abspath(__file__)))
+        os.chdir(os.path.dirname(os.path.abspath( __file__ )))
         seq = 'test-data/sequence.fasta'
         qual = 'test-data/sequence.qual'
         self.seq = fasta.FastaQualityReader(seq, qual)

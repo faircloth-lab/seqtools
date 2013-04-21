@@ -425,9 +425,13 @@ class TestFastqReader(unittest.TestCase):
 class TestFastqWriter(unittest.TestCase):
     """test ability to write fastq files"""
     def setUp(self):
-        os.chdir(os.path.dirname(os.path.abspath(__file__)))
-        fastq_file = 'test-data/sequence.fastq'
-        self.seq = fastq.FastqReader(fastq_file)
+        try:
+            os.chdir(os.path.dirname(os.path.abspath( __file__ )))
+            fastq_file = 'test-data/sequence.fastq'
+            self.seq = fastq.FastqReader(fastq_file)
+        except OSError:
+            fastq_file = 'test-data/sequence.fastq'
+            self.seq = fastq.FastqReader(fastq_file)
     
     def _read_raw_contents(self, file):
         return open(file).read()
