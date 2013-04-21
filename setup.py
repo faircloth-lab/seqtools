@@ -6,7 +6,7 @@ from setuptools import find_packages
 if __name__ == '__main__':
     setup(
         name='seqtools',
-        version="0.6",
+        version="0.8",
         description="Tools for sequence and alignment manipulation",
         author="Brant Faircloth",
         author_email="brant.faircloth+seqtools@gmail.com ",
@@ -30,14 +30,14 @@ if __name__ == '__main__':
             'seqtools.align',
             'seqtools.fs',
             'seqtools.sequence',
-            'seqtools.sequence.tests'
+            'seqtools.tests'
             ],
         package_data = {
             '':['*.txt'],
             'seqtools': [
-                'sequence/tests/test-data/*'
+                'tests/test-data/*'
                 ],
             },
         include_package_data = True,
-        test_suite = "sequence",
+        test_suite = "seqtools.tests",
     )

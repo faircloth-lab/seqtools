@@ -44,6 +44,7 @@ SOFTWARE.
 
 """
 
+import io
 import math
 import copy
 import gzip
@@ -397,7 +398,7 @@ class FastqReader():
     def __init__(self, fastq_file, format = 'sanger'):
         #pdb.set_trace()
         if splitext(fastq_file)[1] == '.gz':
-            self.file = gzip.open(fastq_file, 'rb')
+            self.file = io.BufferedReader(gzip.open(fastq_file, 'rb'))
         else:
             self.file = open(fastq_file)
         self.format = format

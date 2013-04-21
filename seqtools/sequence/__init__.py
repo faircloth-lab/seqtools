@@ -4,4 +4,4 @@ from fops import *
 from sequence import *
 from transform import *
 
-from tests import test
+from seqtools.tests import test
